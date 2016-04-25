@@ -3,5 +3,5 @@ const common = require('../common'),
 
 describe('Users', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
-  it('should navigate to Users', () => common.clickSidebarTab(browser, 'Users'));
+  it('should navigate to Users', () => common.clickSidebarTab(browser, 'Users', 'System Users'));
 });
