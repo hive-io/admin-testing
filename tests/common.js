@@ -10,10 +10,10 @@ module.exports = {
       .then(() => browser.selectByVisibleText('//select[@name="domain"]', domain))
       .then(() => browser.click('//button[@type="submit"]'))
 
-      // wait for the page to show up, default page is the "Dashboard"
+      // wait for the page to show up, default page is the "Overview"
       .then(() => browser.waitForExist('h1.page-header'))
       .then(() => browser.getText('h1.page-header'))
-      .then(header => expect(header).to.equal('Dashboard'));
+      .then(header => expect(header).to.equal('Overview'));
   },
 
   clickSidebarTab: function(browser, tabText, expectedTitle) {
