@@ -23,3 +23,11 @@ module.exports = {
       .then(title => expect(title).to.startWith(!!expectedTitle ? expectedTitle : tabText));
   }
 };
+
+
+/* USEFUL SNIPPITS:
+
+print page source:
+  // .then(() => browser.getSource().then(console.log))
+
+*/
