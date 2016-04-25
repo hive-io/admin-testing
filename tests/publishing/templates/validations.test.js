@@ -7,17 +7,16 @@ function loginAndClickTemplates() {
       .then(() => common.clickSidebarTab(browser, 'Templates'))
 }
 
-function somehowClearThePathField() { return Promise.resolve(); }
+//function somehowClearThePathField() { return Promise.resolve(); }
 
 describe('Templates (Validations)', () => {
-  beforeEach(() => loginAndClickTemplates());
+  before(() => loginAndClickTemplates());
+
   it('should refuse invalid template paths', () => {
     let form = '//form[@id="newTmplForm"]';
-
     return browser.click('//button[@id="new_tmpl"]')
       .then(() => browser.setValue(`${form}//input[@id="path"]`, 'invalid input'))
       .then(() => browser.click(`${form}//input[@name="name"]`))
-      //.then(() => browser.waitForExist('//span[@id=path-message]'))
       .then(() => browser.getText('//span[@id="path-message"]'))
       .then((text) => expect(text).to.equal("Path verification failed - can't mount destination."))
   });
