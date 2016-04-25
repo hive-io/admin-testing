@@ -1,3 +1,4 @@
+'use strict';
 const common = require('../common'),
       expect = require('chai').expect;
 
@@ -6,16 +7,24 @@ describe('Templates', () => {
   it('should navigate to Templates', () => common.clickSidebarTab(browser, 'Templates'));
 
   it('should allow user to create a new template', () => {
-    return browser.click('button[id=new_tmpl]')
-      .then(() => browser.waitForExist('h1.page-header'))
-      .then(() => browser.getText('h1.page-header'))
+    let realHeader = '//div[@id="editTemplate"]//h1[@class="page-header"]';
+    return browser.click('//button[@id="new_tmpl"]')
+      .then(() => browser.waitForExist(realHeader))
+      //.then(() => browser.getSource().then(console.log))
+      .then(() => browser.getText(realHeader))
       .then(title => expect(title).to.equal('Create New Template'));
   });
 
   it('should fill in the new template data', () => {
-    return browser.setValue('//input[@name="name"]', 'Windows 10.1 x64 RE');
+    let name = '//form[@id="newTmplForm"]//input[@name="name"]';
+    return browser.waitForEnabled(name)
+      .then(() => browser.setValue(name, 'Windows 10.1 x64 RE'))
+      .then(() => browser.getValue(name))
+      .then((text) => expect(text).to.equal('Windows 10.1 x64 RE'));
     // .....
   });
+
+
 
 });
 
