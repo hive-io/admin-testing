@@ -4,7 +4,8 @@ var specs = process.env.TEST ?
       [process.env.TEST] : 
       [
         './tests/*.test.js',
-        './tests/**/*.test.js'
+        './tests/**/*.test.js',
+        './tests/**/**/*.test.js'
       ];
       
 exports.config = {
