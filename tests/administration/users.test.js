@@ -29,7 +29,7 @@ describe('Users', () => {
             .selectByVisibleText('//form[@id="add_user_form"]//select[@id="arealm"]', 'local')
             .selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', 'readonly')
             .setValue('//form[@id="add_user_form"]//input[@id="password"]', 'admin')
-            .click('//form[@id="add_user_form"]//button[@type="submit"]')
+            .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'));
         }
       })
   	  .then(() => browser.waitForExist('//button[@id="cp_readonly"]'))
@@ -59,6 +59,29 @@ describe('Users', () => {
       .then(() => browser.waitForExist('//button[@id="rm_readonly"]'))
       .then(() => browser.isExisting('//button[@id="rm_readonly"]'))
       .then((exist) => expect(exist).to.be.true);
+  });
+
+  it('should allow for creation and deletion of new admin user', () => {
+    return browser.waitForExist('//button[@id="add_user"]')
+      .then(() => browser.click('//button[@id="add_user"]'))
+      .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="username"]', 'test'))
+      .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="arealm"]', 'local'))
+      .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', 'admin'))
+      .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', 'test'))
+      .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'))
+      .then(() => browser.waitForExist('//button[@id="rm_test"]'))
+      .then(() => browser.click('//button[@id="rm_test"]'))
+      .then(() => browser.waitForExist('//button[@id="rm_test"]', 500, true))
+  });
+});
+
+describe('Users admin', () => {
+  let login = {name:'admin', password:'admin'};
+  before(() => common.login(browser, login.name, login.password, 'local' ));
+
+  it('should not allow deletion of current admin user', () => {
+    return browser.waitForExist('//button[@id="rm_${login.name}"]', 500, true)
+      .then(() => console.log('${login.name}'))
   });
 });
 
