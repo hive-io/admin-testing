@@ -19,11 +19,9 @@ module.exports = {
   clickSidebarTab: function(browser, tabText, expectedTitle) {
 
     return browser.getUrl()
-      .then((url) => { console.log('this is the first'+url); return url })
       .then((url) => browser.click(`//a[contains(text(), "${tabText}")]`)
         .then(() => browser.waitUntil(() => {
-          return browser.getUrl().then((newurl) => 
-            { console.log('this is the second'+newurl); return newurl }).then((newurl) => url != newurl )
+          return browser.getUrl().then((newurl) => url != newurl )
         }))
       )
       .then(() => browser.waitForExist('h1.page-header'))
