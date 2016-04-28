@@ -10,7 +10,6 @@ describe('Templates', () => {
     let realHeader = '//div[@id="editTemplate"]//h1[@class="page-header"]';
     return browser.click('//button[@id="new_tmpl"]')
       .then(() => browser.waitForExist(realHeader))
-      //.then(() => browser.getSource().then(console.log))
       .then(() => browser.getText(realHeader))
       .then(title => expect(title).to.equal('Create New Template'));
   });
