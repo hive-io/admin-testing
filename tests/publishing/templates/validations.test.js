@@ -9,7 +9,7 @@ function loginAndClickTemplates() {
 
 //function somehowClearThePathField() { return Promise.resolve(); }
 
-describe('Templates (Validations)', () => {
+describe('Template Validations', () => {
   before(() => loginAndClickTemplates());
 
   it('should refuse invalid template paths', () => {
