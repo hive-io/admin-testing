@@ -4,5 +4,5 @@ const common = require('../common'),
 describe('Production Network', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
   it('should navigate to Production Network', () =>
-    common.clickSidebarTab(browser, 'Production Network', 'Interface Assignments'));
+    common.clickSidebarTab(browser, 'Production Network'));
 });
