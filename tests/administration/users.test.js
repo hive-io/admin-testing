@@ -49,8 +49,8 @@ describe('Users', () => {
   it('should allow for creation and deletion of new admin user', () => {
     return common.createNewUser('test','local','admin','admin')
       .then((exist) => expect(exist).to.be.true)
-      .then(() => browser.click('//td[contains(text(),"test") and position()=1]/..//button[contains(@id,"rm")]'))
-      .then(() => browser.waitForExist('//td[contains(text(),"test") and position()=1]/..//button[contains(@id,"rm")]', 500, true))
+      .then(() => browser.click('//td[text()="test" and position()=1]/..//button[contains(@id,"rm")]'))
+      .then(() => browser.waitForExist('//td[text()="test" and position()=1]/..//button[contains(@id,"rm")]', 500, true))
   });
 
   it('should not overwrite existing users', () => {
