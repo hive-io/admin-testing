@@ -1,8 +1,15 @@
+var server = process.env.SERVER ?
+      'http://' + process.env.SERVER : 'http://tongster.synology.me';
+var specs = process.env.TEST ?
+      [process.env.TEST] : 
+      [
+        './tests/*.test.js',
+        './tests/**/*.test.js',
+        './tests/**/**/*.test.js'
+      ];
+      
 exports.config = {
-    specs: [
-      './tests/*.test.js',
-      './tests/**/*.test.js'
-    ],
+    specs: specs,
     exclude: [
       // 'path/to/excluded/files'
     ],
@@ -12,8 +19,7 @@ exports.config = {
     logLevel: 'silent',
     coloredLogs: true,
     screenshotPath: './errorShots/',
-    baseUrl: process.env.SERVER ?
-      'http://' + process.env.SERVER : 'http://tongster.synology.me',
+    baseUrl: server, 
     waitforTimeout: 1500000,
     framework: 'mocha',
     reporter: 'spec',

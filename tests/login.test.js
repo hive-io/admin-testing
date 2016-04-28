@@ -17,7 +17,7 @@ describe('log in to the admin page', () => {
   it('should then be on the main dashboard page', () => {
     return browser.waitForExist('h1.page-header')
       .then(() => browser.getText('h1.page-header'))
-      .then(header => expect(header).to.equal('Dashboard'));
+      .then(header => expect(header).to.equal('Overview'));
   });
 
 });

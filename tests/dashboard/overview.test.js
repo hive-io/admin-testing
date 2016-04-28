@@ -1,8 +1,8 @@
 const common = require('../common'),
       expect = require('chai').expect;
 
-describe('Power', () => {
+describe('Overview', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
-  it('should navigate to Power', () =>
-    common.clickSidebarTab(browser, 'Power', 'Power Options'));
+  it('should navigate to Overview', () =>
+    common.clickSidebarTab(browser, 'Overview'));
 });
