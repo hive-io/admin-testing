@@ -4,6 +4,7 @@ const common = require('../common'),
 
 describe('Templates', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
+  after(() => common.logout());
   it('should navigate to Templates', () => common.clickSidebarTab(browser, 'Templates'));
 
   it('should allow user to create a new template', () => {
@@ -20,7 +21,6 @@ describe('Templates', () => {
       .then(() => browser.setValue(name, 'Windows 10.1 x64 RE'))
       .then(() => browser.getValue(name))
       .then((text) => expect(text).to.equal('Windows 10.1 x64 RE'));
-    // .....
   });
 
 

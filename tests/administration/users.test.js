@@ -8,6 +8,7 @@ describe('Users', () => {
     return common.login(browser, 'admin', 'admin', 'local' )
       .then(() => common.clickSidebarTab(browser, 'Users', 'System Users'))
   });
+  afterEach(() => common.logout());
 
   //it('should navigate to Users', () => common.clickSidebarTab(browser, 'Users', 'System Users'));
   

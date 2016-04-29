@@ -7,11 +7,9 @@ function loginAndClickTemplates() {
       .then(() => common.clickSidebarTab(browser, 'Templates'))
 }
 
-//function somehowClearThePathField() { return Promise.resolve(); }
-
 describe('Template Validations', () => {
   before(() => loginAndClickTemplates());
-
+  after(() => common.logout());
   it('should refuse invalid template paths', () => {
     let form = '//form[@id="newTmplForm"]';
     return browser.click('//button[@id="new_tmpl"]')

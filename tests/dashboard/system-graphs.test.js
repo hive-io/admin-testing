@@ -3,6 +3,7 @@ const common = require('../common'),
 
 describe('System Graphs', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
+  after(() => common.logout());
   it('should navigate to system graphs', () =>
     common.clickSidebarTab(browser, 'System Graph'));
 

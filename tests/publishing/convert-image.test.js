@@ -5,6 +5,7 @@ describe('Convert Image', () => {
   beforeEach(() => common.login(browser, 'admin', 'admin', 'local')
     .then(() => common.clickSidebarTab(browser, 'Convert Image'))
   );
+  afterEach(() => common.logout());
 
   it('should complain about empty source input', () => {
   	return browser.getValue('//input[@id="source"]')

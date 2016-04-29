@@ -16,7 +16,7 @@ describe('New User Validations', () => {
   	  .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', 'readonly'))
   	  .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', 'admin'))
   	  .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'))
-      .then(() => browser.waitForExist('//td[not(string())]/..//button[contains(@id,"rm")]', 500, true))
+      .then(() => browser.waitForExist('//td[not(string()) and position()=1]', 500, true))
   });
 
   it('should not allow an empty password', () => {
@@ -27,13 +27,13 @@ describe('New User Validations', () => {
   	  .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', 'readonly'))
   	  .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', ''))
   	  .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'))
-      .then(() => browser.waitForExist('//td[text()="test_user"]/..//button[contains(@id,"rm")]', 500, true))
+      .then(() => browser.waitForExist('//td[text()="test_user" and position()=1]', 500, true))
   });
 
   it('should clean up', () => {
-    return browser.isExisting('//td[not(string())]/..//button[contains(@id,"rm")]')
-	  .then((ex) => ex ? browser.click('//td[not(string())]/..//button[contains(@id,"rm")]') : null)
-	  .then(() => browser.isExisting('//td[text()="test_user"]/..//button[contains(@id,"rm")]'))
-	  .then((ex) => ex ? browser.click('//td[text()="test_user"]/..//button[contains(@id,"rm")]') : null)
+    return browser.isExisting('//td[not(string()) and position()=1]')
+	  .then((ex) => ex ? browser.click('//td[not(string()) and position()=1]/..//button[contains(@id,"rm")]') : null)
+	  .then(() => browser.isExisting('//td[text()="test_user" and position()=1]'))
+	  .then((ex) => ex ? browser.click('//td[text()="test_user" and position()=1]/..//button[contains(@id,"rm")]') : null)
   });
 });
