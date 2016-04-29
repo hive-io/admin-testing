@@ -33,6 +33,6 @@ describe('Convert Image', () => {
       .then(() => browser.click('//button[@id="btn_convert"]'))
       .then(() => browser.setValue('//input[@id="output"]', ''))
       .then(() => browser.click('//button[@id="btn_convert"]'))
-      .then(() => browser.waitForExist('//input[@id="output"]/..//i[position()=2])',500,true))
+      .then(() => browser.waitForExist('//input[@id="output"]/..//i[position()=2]',500,true))
   });      
 });
