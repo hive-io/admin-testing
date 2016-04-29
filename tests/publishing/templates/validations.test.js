@@ -18,31 +18,4 @@ describe('Template Validations', () => {
       .then(() => browser.getText('//span[@id="path-message"]'))
       .then((text) => expect(text).to.equal("Path verification failed - can't mount destination."))
   });
-
-  // it('puts', () => {
-  //   expect(true).to.be.true;
-  // });
-
-  // it('the lotion', () => {
-  //   expect(true).to.be.true;
-  // });
-
-  // it('on', () => {
-  //   expect(true).to.be.true;
-  // });
-
-
-  // describe('Path', () => {
-  //   afterEach(() => somehowClearThePathField());
-  //   it('should not allow the word monkey', () => {
-  //     expect(true).to.be.true;
-  //   });
-
-  //   it('should not allow the characters $%^^&**^%', () => {
-  //     expect(true).to.be.false;
-  //   });
-  // })
-
 });
-
-

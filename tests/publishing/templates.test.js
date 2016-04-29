@@ -23,8 +23,4 @@ describe('Templates', () => {
       .then((text) => expect(text).to.equal('Windows 10.1 x64 RE'));
   });
 
-
-
 });
-
-

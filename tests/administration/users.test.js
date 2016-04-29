@@ -67,5 +67,4 @@ describe('Users', () => {
   it('should not allow deletion of current admin user', () => {
     return browser.waitForExist(`//td[text()="admin" and position()=1]/..//button[contains(@id,"rm")]`, 500, true)
   });
-
 });

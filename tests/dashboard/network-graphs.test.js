@@ -27,5 +27,4 @@ describe('Network Graphs', () => {
       .then(title => expect(title).to.equal(test.expected));
     });
   });
-
 });
