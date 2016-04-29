@@ -1,48 +1,54 @@
+'use strict';
 const chai = require('chai'), expect = chai.expect;
 chai.use(require('chai-string'));
 
 module.exports = {
   login: function(browser, username, password, domain) {
-    return browser.url('/').getTitle()
-      .then(title => expect(title).to.startWith('hiveIO Appliance |'))
-      .then(() => browser.setValue('//input[@name="username"]', username))
-      .then(() => browser.setValue('//input[@name="password"]', password))
-      .then(() => browser.selectByVisibleText('//select[@name="domain"]', domain))
+    return browser.url('/')
+      .then(() => browser.waitForExist('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', 10000))
+      .then(() => browser.setValue('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', username))
+      .then(() => browser.waitForExist('//div[@class="input-group"]//input[@name="password"]', 10000))
+      .then(() => browser.setValue('//div[@class="input-group"]//input[@name="password"]', password))
+      .then(() => browser.waitForExist('//div[@class="input-group"]//select[@name="domain"]'), 10000)
+      .then(() => browser.selectByVisibleText('//div[@class="input-group"]//select[@name="domain"]', domain))
+      .then(() => browser.waitForExist('//button[@type="submit"]'), 10000)
       .then(() => browser.click('//button[@type="submit"]'))
-
-      // wait for the page to show up, default page is the "Overview"
-      .then(() => browser.waitForExist('h1.page-header'))
-      .then(() => browser.getText('h1.page-header'))
-      .then(header => expect(header).to.equal('Overview'));
+      .then(() => browser.waitForExist('//h1[@class="page-header"]', 10000))
+      .then(() => browser.getText('//h1[@class="page-header"]'))
+      .then(header => expect(header).to.startWith('Overview'))
   },
 
   clickSidebarTab: function(browser, tabText, expectedTitle) {
-
-    return browser.getUrl()
-      .then((url) => browser.click(`//a[contains(text(), "${tabText}")]`)
-        .then(() => browser.waitUntil(() => {
-          return browser.getUrl().then((newurl) => url != newurl )
-        }))
-      )
-      .then(() => browser.waitForExist('h1.page-header'))
-      .then(() => browser.getText('h1.page-header'))
-      .then(title => expect(title).to.startWith(!!expectedTitle ? expectedTitle : tabText));
+    let firstUrl;
+    let correct_title = !!expectedTitle ? expectedTitle : tabText
+    return browser.waitForExist(`//a[contains(text(), "${tabText}")]`, 10000)
+      .then(() => browser.getUrl())
+      .then((url) => firstUrl = url )
+      .then(() => browser.click(`//a[contains(text(), "${tabText}")]`))
+      .then(() => browser.waitUntil(() => browser.getUrl().then((newurl) => firstUrl !== newurl ) ) )
+      .then(() => browser.waitForExist('//h1[@class="page-header"]'))
+      .then(() => browser.getText('//h1[@class="page-header"]'))
+      .then(title => expect(title).to.startWith(correct_title))
   },
+
   isLoggedIn: function(){
     return browser.isExisting('//li[@class="user-dropdown"]')
       .then((ex) => ex ? browser.getText('//li[@class="user-dropdown"]') : null )
   },
+
   logout: function(){
     return module.exports.isLoggedIn()
       .then((log) => {
-        if(log){
+        if(!!log){
           return browser.waitForExist('//li[contains(@class,"user-dropdown")]')
             .then(() => browser.click('//li[contains(@class,"user-dropdown")]'))
+            .then(() => browser.waitForExist('//a[text()=" Log Out"]'))
             .then(() => browser.click('//a[text()=" Log Out"]'))
             .then(() => broswer.waitForExist('//div[@class="container"]//h2[contains(text(),"Hello")]'))
       }
     })
   },
+
   createNewUser: function (name, realm, role, password) {
     return browser.waitForExist('//button[@id="add_user"]', 500)
       .then(() => browser.click('//button[@id="add_user"]'))
@@ -50,12 +56,9 @@ module.exports = {
       .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="arealm"]', realm))
       .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', role))
       .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', password))
-      .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'))
-      .then(() => browser.waitForExist(`//td[text()="${name}" and position()=1]`))
-      .then(() => browser.isExisting(`//td[text()="${name}" and position()=1]`))
+      .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'));
   }
 };
-
 
 /* USEFUL SNIPPITS:
 
