@@ -23,8 +23,8 @@ describe('Users', () => {
 
   it('should allow password changes for readonly user', () => {
   	return browser.waitForExist('//td[text()="readonly" and position()=1]/..//button[contains(@id,"cp")]')
-      .then(() => browser.isExisting('//td[text()="readonly" and position()=1]/..//button[contains(@id,"cp")]')
-      .then((exists) => { !exists ? common.createNewUser('readonly', 'local', 'readonly', 'admin') : null })
+      .then(() => browser.isExisting('//td[text()="readonly" and position()=1]/..//button[contains(@id,"cp")]'))
+      .then((exists) => !exists ? common.createNewUser('readonly', 'local', 'readonly', 'admin') : null )
   	  .then(() => browser.waitForExist('//td[text()="readonly" and position()=1]/..//button[contains(@id,"cp")]', 1000))
       .then(() => browser.click('//td[text()="readonly" and position()=1]/..//button[contains(@id,"cp")]'))
   	  .then(() => browser.setValue('//td[text()="readonly" and position()=1]/..//input[@id="password"]', 'admin'))

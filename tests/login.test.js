@@ -19,5 +19,4 @@ describe('log in to the admin page', () => {
       .then(() => browser.getText('h1.page-header'))
       .then(header => expect(header).to.equal('Overview'));
   });
-
 });
