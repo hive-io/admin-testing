@@ -3,6 +3,7 @@ const chai = require('chai'), expect = chai.expect;
 chai.use(require('chai-string'));
 
 module.exports = {
+
   login: function(browser, username, password, domain) {
     return browser.url('/')
       .then(() => browser.waitForExist('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', 10000))
@@ -13,22 +14,33 @@ module.exports = {
       .then(() => browser.selectByVisibleText('//div[@class="input-group"]//select[@name="domain"]', domain))
       .then(() => browser.waitForExist('//button[@type="submit"]'), 10000)
       .then(() => browser.click('//button[@type="submit"]'))
-      .then(() => browser.waitForExist('//h1[@class="page-header"]', 10000))
-      .then(() => browser.getText('//h1[@class="page-header"]'))
-      .then(header => expect(header).to.startWith('Overview'))
+      .then(() => browser.waitForExist('//h1[@class="page-header"]'))
+      .then(() => browser.waitUntil(() => 
+        browser.getText('//h1[@class="page-header"]')
+        .then((text) => { return text === 'Overview'; })
+      ,10000, 250) )
   },
 
   clickSidebarTab: function(browser, tabText, expectedTitle) {
     let firstUrl;
     let correct_title = !!expectedTitle ? expectedTitle : tabText
-    return browser.waitForExist(`//a[contains(text(), "${tabText}")]`, 10000)
+    return browser.waitForExist(`//a[contains(text(), "${tabText}")]`, 20000)
       .then(() => browser.getUrl())
       .then((url) => firstUrl = url )
+      .then(() => browser.waitUntil(() => 
+        browser.getAttribute(`//a[contains(text(), "${tabText}")]`, 'onclick')
+          .then((cl) => { if (!!cl) { return expect(cl).to.not.be.null; } 
+            else{ console.log(cl); return expect(cl).to.not.be.null }})
+      ,10000, 250))
       .then(() => browser.click(`//a[contains(text(), "${tabText}")]`))
-      .then(() => browser.waitUntil(() => browser.getUrl().then((newurl) => firstUrl !== newurl ) ) )
-      .then(() => browser.waitForExist('//h1[@class="page-header"]'))
-      .then(() => browser.getText('//h1[@class="page-header"]'))
-      .then(title => expect(title).to.startWith(correct_title))
+      .then(() => browser.waitUntil(() => 
+        browser.getUrl().then((newurl) => firstUrl !== newurl ) 
+      ,10000, 250) )
+      .then(() => browser.waitForExist('//h1[@class="page-header"]'), 10000)
+      .then(() => browser.waitUntil(() => 
+        browser.getText('//h1[@class="page-header"]')
+        .then((text) => text === correct_title)
+      ,10000, 250) )
   },
 
   isLoggedIn: function(){
@@ -57,7 +69,31 @@ module.exports = {
       .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', role))
       .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', password))
       .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'));
-  }
+  },
+
+  //doesn't work with form submit button
+  waitForOnClick: function (xpath) {
+    return browser.waitForVisible(xpath)
+      .then(() => browser.waitUntil(() => {
+        return browser.getAttribute(xpath, 'onclick')
+        .then((cl) => { if (!cl) {console.log(cl)}; return cl !== null; })
+      }, 10000));
+  },
+
+  waitAndClick: function (xpath) {
+    return browser.waitForExist(xpath, 10000)
+      .then(() => browser.getAttribute(xpath, 'type'))
+      .then((type) => {
+        if (type === 'submit'){
+          return browser.click(xpath);
+        }
+        else {
+          return module.exports.waitForOnClick(xpath).then(() => browser.click(xpath));
+        }
+      });
+  },
+
+
 };
 
 /* USEFUL SNIPPITS:
