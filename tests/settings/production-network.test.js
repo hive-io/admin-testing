@@ -7,4 +7,5 @@ describe('Production Network', () => {
   
   it('should navigate to Production Network', () =>
     common.clickSidebarTab(browser, 'Production Network'));
+ 
 });

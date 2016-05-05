@@ -5,7 +5,7 @@ describe('Network Graphs', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
   after(() => common.logout());
   it('should navigate to Network Graphs', () =>
-    common.clickSidebarTab(browser, 'Network Graph'));
+    common.clickSidebarTab(browser, 'Network Graph', 'Network Graphs'));
 
   [
     //Eth0

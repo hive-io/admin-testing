@@ -25,7 +25,7 @@ describe('Convert Image', () => {
       .then(() => browser.click('//button[@id="btn_convert"]'))
       .then(() => browser.setValue('//input[@id="source"]', ''))
       .then(() => browser.click('//button[@id="btn_convert"]'))
-      .then(() => browser.waitForExist('//input[@id="source"]/..//i[position()=2])',500,true))
+      .then(() => browser.waitForExist('//input[@id="source"]/..//i[position()=2]',500,true))
   });
 
   it('should clear old output error messages', () => {
