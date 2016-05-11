@@ -1,40 +1,40 @@
-'use strict';
-const Promise = require('bluebird'),
-      common = require('../common'),
-      expect = require('chai').expect;
+// 'use strict';
+// const Promise = require('bluebird'),
+//       common = require('../common'),
+//       expect = require('chai').expect;
 
-describe('Guest Pools', () => {
-  beforeEach(() => { return common.login(browser, 'admin', 'admin', 'local')
-    .then(() => common.clickSidebarTab(browser, 'Guest Pools'));
-  });
-  after(() => common.logout());
+// describe('Guest Pools', () => {
+//   before(() => { return common.login(browser, 'admin', 'admin', 'local')
+//     .then(() => common.clickSidebarTab(browser, 'Guest Pools'));
+//   });
+//   after(() => common.logout());
 
   // it('should navigate to Guest Pools', () =>
   //   common.clickSidebarTab(browser, 'Guest Pools'));
 
-  it('should not allow adding a pool if there are no templates', () => {
-    return browser.waitForExist('//*[@id="add_pool"]')
-      .then(() => browser.isExisting('//*[@id="add_pool" and contains(@class,"disabled")]'))
-      .then((ex) => {
-        if(ex){
-          return common.waitAndClick('//*[@id="add_pool"]')
-            .then(() => browser.waitForExist('//*[@id="pool_form" and @class="hidden"]'))
-        }
-        else {
-          return console.log('Templates are available.')
-        }
-    });
-  });
+  // it('should not allow adding a pool if there are no templates', () => {
+  //   return browser.waitForExist('//*[@id="add_pool"]')
+  //     .then(() => browser.isExisting('//*[@id="add_pool" and contains(@class,"disabled")]'))
+  //     .then((ex) => {
+  //       if(ex){
+  //         return common.waitAndClick('//*[@id="add_pool"]')
+  //           .then(() => browser.waitForExist('//*[@id="pool_form" and @class="hidden"]'))
+  //       }
+  //       else {
+  //         return console.log('Templates are available.')
+  //       }
+  //   });
+  // });
 
-  it('should allow cancellation of creating a new pool', ()=> {
-    return browser.waitForExist('//*[@id="add_pool"]')
-      .then(() => browser.isExisting('//*[@id="add_pool" and contains(@class,"disabled")]'))
-      .then((ex) => {if(!ex){ 
-        return common.waitAndClick('//*[@id="add_pool"]')
-          .then(() => common.waitAndClick('//*[@id="add_pool_form"]/div[8]/button[2 and text()="Cancel"]'))
-          .then(() => browser.waitForExist('//*[@id="add_pool" and not(contains(@class,"hidden"))]')); 		
-      }});
-  });
+  // it('should allow cancellation of creating a new pool', ()=> {
+  //   return browser.waitForExist('//*[@id="add_pool"]')
+  //     .then(() => browser.isExisting('//*[@id="add_pool" and contains(@class,"disabled")]'))
+  //     .then((ex) => {if(!ex){ 
+  //       return common.waitAndClick('//*[@id="add_pool"]')
+  //         .then(() => common.waitAndClick('//*[@id="add_pool_form"]/div[8]/button[2 and text()="Cancel"]'))
+  //         .then(() => browser.waitForExist('//*[@id="add_pool" and not(contains(@class,"hidden"))]')); 		
+  //     }});
+  // });
 
   // it('should allow creating a new pool when a template exists', () => {
   //   return browser.waitForExist('//*[@id="add_pool"]')
@@ -93,4 +93,4 @@ describe('Guest Pools', () => {
   //     .then(els => Promise.mapSeries(els.value, poolTest));
   // });
 
-});
+// });
