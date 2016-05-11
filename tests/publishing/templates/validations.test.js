@@ -2,15 +2,16 @@
 const common = require('../../common'),
       expect = require('chai').expect;
 
-function loginAndClickTemplates() {
-  return common.login(browser, 'admin', 'admin', 'local')
-      .then(() => common.clickSidebarTab(browser, 'Templates'))
-}
-
 describe('Template Validations', () => {
-  before(() => loginAndClickTemplates());
-  after(() => common.logout());
-
+  before(() => {
+    return common.isLoggedIn()
+      .then((loggedIn) => {
+        if(!loggedIn) {
+          return common.login(browser, 'admin', 'admin', 'local')
+        }
+      })
+      .then(() => common.clickSidebarTab(browser, 'Templates'))
+  });
   it('should refuse a blank new template form', () => {
     return common.waitAndClick('//button[@id="new_tmpl"]')
       .then(() => common.waitAndClick('//*[@id="subBtn"]'))
@@ -79,5 +80,7 @@ describe('Template Validations', () => {
       .then(() => common.waitAndClick('//*[@id="subBtn"]'))
       .then(() => browser.waitForExist('//*[@id="path-message"]', 10000));
   });
+
+  it('should clean up failed tests', () => {})
 
 });
