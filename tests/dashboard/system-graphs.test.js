@@ -1,3 +1,7 @@
+// TO DO 
+
+// Missing a test if the data updates, and (again if possible) verification that the graphs are not empty
+
 const common = require('../common'),
     expect = require('chai').expect;
 

@@ -1,3 +1,10 @@
+// TO DO
+
+// If the conversion is done on a large file the current 
+// implementation will eventually stop the spinner and 
+// alert the user that the conversion is still running 
+// (this is due to Nginx session timeout)
+
 const common = require('../common'),
       expect = require('chai').expect;
 

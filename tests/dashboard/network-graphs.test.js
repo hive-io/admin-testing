@@ -1,3 +1,11 @@
+// TO DO
+
+// Are all network interfaces present in the drop down?
+// Do they all have a graph
+// Change of interface in dropdown generates a new graph
+// Validate that data streams in (e.g. should wait a for the graph to update)
+// Validate empty graphs - need to think how this is possible
+
 const common = require('../common'),
       expect = require('chai').expect;
 

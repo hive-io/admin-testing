@@ -72,13 +72,13 @@ module.exports = {
             .then(() => browser.click('//li[contains(@class,"user-dropdown")]'))
             .then(() => browser.waitForExist('//a[text()=" Log Out"]'))
             .then(() => browser.click('//a[text()=" Log Out"]'))
-            .then(() => broswer.waitForExist('//div[@class="container"]//h2[contains(text(),"Hello")]'))
+            .then(() => browser.waitForExist('//div[@class="container"]//h2[contains(text(),"Hello")]'))
       }
     })
   },
 
   createNewUser: function (name, realm, role, password) {
-    return browser.waitForExist('//button[@id="add_user"]', 500)
+    return browser.waitForExist('//button[@id="add_user"]', 5000)
       .then(() => browser.click('//button[@id="add_user"]'))
       .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="username"]', name))
       .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="arealm"]', realm))

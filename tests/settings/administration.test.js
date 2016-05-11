@@ -103,4 +103,5 @@ describe('Administration', () => {
       .then(() => browser.waitForExist('//div[@id="adminOverlay"]', 10000, true))
       .then(() => browser.waitForExist('//table[@id="supportFiles"]//tbody', 10000, true))
   });
+
 });
