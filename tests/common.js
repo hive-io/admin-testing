@@ -5,47 +5,63 @@ chai.use(require('chai-string'));
 module.exports = {
 
   login: function(browser, username, password, domain) {
-    return browser.url('/')
-      .then(() => browser.waitForExist('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', 10000))
-      .then(() => browser.setValue('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', username))
-      .then(() => browser.waitForExist('//div[@class="input-group"]//input[@name="password"]', 10000))
-      .then(() => browser.setValue('//div[@class="input-group"]//input[@name="password"]', password))
-      .then(() => browser.waitForExist('//div[@class="input-group"]//select[@name="domain"]'), 10000)
-      .then(() => browser.selectByVisibleText('//div[@class="input-group"]//select[@name="domain"]', domain))
-      .then(() => browser.waitForExist('//button[@type="submit"]'), 10000)
-      .then(() => browser.click('//button[@type="submit"]'))
-      .then(() => browser.waitForExist('//h1[@class="page-header"]'))
-      .then(() => browser.waitUntil(() => 
-        browser.getText('//h1[@class="page-header"]')
-        .then((text) => { return text === 'Overview'; })
-      ,10000, 250) )
+    return module.exports.isLoggedIn()
+      .then((logged) => { if (!logged) {
+        return browser.url('/')
+          .then(() => browser.waitForExist('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', 10000))
+          .then(() => browser.setValue('//div[@class="input-group margin-bottom-sm"]//input[@name="username"]', username))
+          .then(() => browser.waitForExist('//div[@class="input-group"]//input[@name="password"]', 10000))
+          .then(() => browser.setValue('//div[@class="input-group"]//input[@name="password"]', password))
+          .then(() => browser.waitForExist('//div[@class="input-group"]//select[@name="domain"]'), 10000)
+          .then(() => browser.selectByVisibleText('//div[@class="input-group"]//select[@name="domain"]', domain))
+          .then(() => browser.waitForExist('//button[@type="submit"]'), 10000)
+          .then(() => browser.click('//button[@type="submit"]'))
+          .then(() => browser.waitForExist('//h1[@class="page-header"]'))
+          .then(() => browser.waitUntil(() => 
+            browser.getText('//h1[@class="page-header"]')
+            .then((text) => { return text === 'Overview'; })
+          ,10000, 250) )
+      }
+      else {
+        return module.exports.clickSidebarTab(browser, 'Overview')
+      }
+    })
   },
 
   clickSidebarTab: function(browser, tabText, expectedTitle) {
     let firstUrl;
-    let correct_title = !!expectedTitle ? expectedTitle : tabText
-    return browser.waitForExist(`//a[contains(text(), "${tabText}")]`, 20000)
-      .then(() => browser.getUrl())
-      .then((url) => firstUrl = url )
-      .then(() => browser.waitUntil(() => 
-        browser.getAttribute(`//a[contains(text(), "${tabText}")]`, 'onclick')
-          .then((cl) => { if (!!cl) { return expect(cl).to.not.be.null; } 
-            else{ console.log(cl); return expect(cl).to.not.be.null }})
-      ,10000, 250))
-      .then(() => browser.click(`//a[contains(text(), "${tabText}")]`))
-      .then(() => browser.waitUntil(() => 
-        browser.getUrl().then((newurl) => firstUrl !== newurl ) 
-      ,10000, 250) )
-      .then(() => browser.waitForExist('//h1[@class="page-header"]'), 10000)
-      .then(() => browser.waitUntil(() => 
-        browser.getText('//h1[@class="page-header"]')
-        .then((text) => text === correct_title)
-      ,10000, 250) )
+    let existingTitle;
+    let correctTitle = !!expectedTitle ? expectedTitle : tabText
+    return browser.waitForExist('//h1[@class="page-header"]', 10000)
+      //CHECK IF IT IS ALREADY ON THE RIGHT PAGE
+      .then(() => browser.getText('//h1[@class="page-header"]'))
+      .then((text) => existingTitle = text )
+      .then(() => {
+        if (existingTitle !== correctTitle) {
+          return browser.getUrl()
+            .then((url) => firstUrl = url )
+            .then(() => browser.waitUntil(() => 
+              browser.getAttribute(`//a[contains(text(), "${tabText}")]`, 'onclick')
+                .then((cl) => { 
+                  if (!!cl) { return expect(cl).to.not.be.null } 
+                  else{ console.log('onclick: ',cl); return expect(cl).to.not.be.null }})
+            ,10000, 250))
+            .then(() => browser.click(`//a[contains(text(), "${tabText}")]`))
+            .then(() => browser.waitUntil(() => 
+              browser.getUrl().then((newurl) => firstUrl !== newurl ) 
+              ,10000, 250) )
+            .then(() => browser.waitForExist('//h1[@class="page-header"]'), 10000)
+            .then(() => browser.waitUntil(() => 
+              browser.getText('//h1[@class="page-header"]')
+              .then((text) => text === correctTitle)
+            ,10000, 250) )
+        }
+      })
   },
 
   isLoggedIn: function(){
-    return browser.isExisting('//li[@class="user-dropdown"]')
-      .then((ex) => ex ? browser.getText('//li[@class="user-dropdown"]') : null )
+    return browser.isExisting('//*[@id="wrapper"]/nav/div[2]/ul[2]/li[3]/a')
+      .then((ex) => ex ? true : false )
   },
 
   logout: function(){
