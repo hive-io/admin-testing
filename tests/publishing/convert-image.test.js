@@ -15,10 +15,10 @@ describe('Convert Image', () => {
   afterEach(() => common.logout());
 
   it('should complain about empty source input', () => {
-  	return browser.getValue('//input[@id="source"]')
-  	  .then((text) => expect(text).to.equal(''))
-  	  .then(() => browser.click('//button[@id="btn_convert"]'))
-  	  .then(() => browser.isVisible('//div[@class="has-error"]'))
+    return browser.getValue('//input[@id="source"]')
+      .then((text) => expect(text).to.equal(''))
+      .then(() => browser.click('//button[@id="btn_convert"]'))
+      .then(() => browser.isVisible('//div[@class="has-error"]'))
   });
   
   it('should complain about invalid source input', () => {
