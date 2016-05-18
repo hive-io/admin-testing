@@ -64,7 +64,8 @@ describe('Realms', () => {
   
 
   it('should return to page once add realm is cancelled', () => {
-    return common.waitForOnClick('//*[@id="add_realm"]')
+    return browser.refresh()
+      .then(() => common.waitForOnClick('//*[@id="add_realm"]'))
       .then(() => browser.click('//*[@id="add_realm"]'))
       .then(() => common.waitForOnClick('//*[@id="add_realm_form"]/button[2 and text()="Cancel"]'))
       .then(() => browser.click('//*[@id="add_realm_form"]/button[2 and text()="Cancel"]'))
