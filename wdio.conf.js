@@ -20,10 +20,11 @@ exports.config = {
     coloredLogs: true,
     screenshotPath: './errorShots/',
     baseUrl: server, 
-    waitforTimeout: 1500000,
+    waitforTimeout: 60000,
     framework: 'mocha',
     reporter: 'spec',
     mochaOpts: {
-      ui: 'bdd'
+      ui: 'bdd',
+      timeout: 240000
     },
 };
