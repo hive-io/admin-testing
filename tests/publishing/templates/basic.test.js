@@ -1,5 +1,5 @@
 'use strict';
-const common = require('../common'),
+const common = require('../../common'),
       expect = require('chai').expect;
 
 describe('Templates', () => {

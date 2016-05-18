@@ -12,6 +12,7 @@ describe('Template Validations', () => {
       })
       .then(() => common.clickSidebarTab(browser, 'Templates'))
   });
+
   it('should refuse a blank new template form', () => {
     return common.waitAndClick('//button[@id="new_tmpl"]')
       .then(() => common.waitAndClick('//*[@id="subBtn"]'))

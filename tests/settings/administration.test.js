@@ -5,7 +5,7 @@ describe('Administration', () => {
   before(() => { return common.login(browser, 'admin', 'admin', 'local')
     .then(() => common.clickSidebarTab(browser, 'Administration', 'Appliance Administration'))
   });
-  after(() => common.logout());
+  after(() => browser.refresh());
 
   // it('should navigate to Administration', () =>
   //   common.clickSidebarTab(browser, 'Administration', 'Appliance Administration'));
