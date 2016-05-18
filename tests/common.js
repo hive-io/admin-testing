@@ -1,5 +1,8 @@
 'use strict';
-const chai = require('chai'), expect = chai.expect;
+const chai = require('chai'), 
+      expect = chai.expect,
+      Promise = require('bluebird'),
+      fs = Promise.promisifyAll(require('fs'));
 chai.use(require('chai-string'));
 
 module.exports = {
@@ -100,7 +103,7 @@ module.exports = {
     return browser.waitForExist(xpath, 10000)
       .then(() => browser.getAttribute(xpath, 'type'))
       .then((type) => {
-        if (type === 'submit'){
+        if (type !== null){
           return browser.click(xpath);
         }
         else {
@@ -109,6 +112,15 @@ module.exports = {
       });
   },
 
+  waitAndSet: function (xpath, value) {
+    return browser.waitForExist(xpath, 10000)
+      .then(() => browser.setValue(xpath, value));
+  },
+
+  checkAndDeleteFile: function (path) {
+    return fs.statAsync(path)
+      .then(r => fs.unlink(path))
+  },
 
 };
 
