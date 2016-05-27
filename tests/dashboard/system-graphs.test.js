@@ -1,10 +1,15 @@
+// TO DO 
+
+// Missing a test if the data updates, and (again if possible) verification that the graphs are not empty
+
 const common = require('../common'),
     expect = require('chai').expect;
 
 describe('System Graphs', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
+  after(() => common.logout());
   it('should navigate to system graphs', () =>
-    common.clickSidebarTab(browser, 'System Graph'));
+    common.clickSidebarTab(browser, 'System Graph', 'System Graphs'));
 
   [
     //CPU

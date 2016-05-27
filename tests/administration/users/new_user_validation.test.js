@@ -3,37 +3,45 @@ const common = require('../../common'),
       expect = require('chai').expect;
 
 describe('New User Validations', () => {
-  before(() => { 
-	common.login(browser, 'admin', 'admin', 'local' )
-	.then(() => common.clickSidebarTab(browser, 'Users', 'System Users'));
+  before(() => {
+    return common.isLoggedIn()
+      .then((loggedIn) => { 
+        if(!loggedIn) {
+          return common.login(browser, 'admin', 'admin', 'local')
+        }
+      })
+      .then(() => common.clickSidebarTab(browser, 'Users', 'System Users'))
   });
 
-  it('should not allow empty name', () => {
-  	return browser.waitForExist('//button[@id="add_user"]')
-      .then(() => browser.click('//button[@id="add_user"]'))
-  	  .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="username"]', ''))
-  	  .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="arealm"]', 'local'))
-  	  .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', 'readonly'))
-  	  .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', 'admin'))
-  	  .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'))
-      .then(() => browser.waitForExist('//button[@id="rm_"]', 500, true))
+  it('should not allow user creation with empty name', () => {
+    return common.createNewUser('', 'local', 'readonly', 'admin')
+      .then(() => browser.waitForExist('//tbody'))
+      .then(() => browser.isExisting('//td[not(string()) and position()=1]'))
+      .then((ex) => expect(ex).to.be.false)
   });
 
-  it('should not allow an empty password', () => {
-  	return browser.waitForExist('//button[@id="add_user"]')
-      .then(() => browser.click('//button[@id="add_user"]'))
-  	  .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="username"]', 'test_user'))
-  	  .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="arealm"]', 'local'))
-  	  .then(() => browser.selectByVisibleText('//form[@id="add_user_form"]//select[@id="role"]', 'readonly'))
-  	  .then(() => browser.setValue('//form[@id="add_user_form"]//input[@id="password"]', ''))
-  	  .then(() => browser.click('//form[@id="add_user_form"]//button[@type="submit"]'))
-      .then(() => browser.waitForExist('//button[@id="rm_test_user"]', 500, true))
+  it('should not allow user creation with an empty password', () => {
+    return common.createNewUser('test_user', 'local', 'readonly', '')
+      .then(() => browser.waitForExist('//tbody'))
+      .then(() => browser.isExisting('//td[text()="test_user" and position()=1]'))
+      .then((ex) => expect(ex).to.be.false)
   });
 
-  it('should clean up', () => {
-    return browser.isExisting('//button[@id="rm_"]')
-	  .then((ex) => ex ? browser.click('//button[@id="rm_"]') : null)
-	  .then(() => browser.isExisting('//button[@id="rm_test_user"]'))
-	  .then((ex) => ex ? browser.click('//button[@id="rm_test_user"]') : null)
+  it('should not overwrite existing users', () => {
+    let login = {name:'test', pass:'test123', wrongpass:'456exam', 
+      realm:'local', role:'readonly'};
+    let wrongLogged;
+    return common.createNewUser(login.name, login.realm, login.role, login.pass)
+      .then(() => common.createNewUser(login.name, login.realm, login.role, login.wrongpass))
+      .then(() => common.logout())
+      .then(() => common.login(browser, login.name, login.wrongpass, 'local' ))
+      .then(() => common.isLoggedIn())
+      .then((ex) => wrongLogged = ex)
+      .then(() => common.logout())
+      .then(() => common.login(browser, 'admin', 'admin', 'local'))
+      .then(() => common.clickSidebarTab(browser, 'Users', 'System Users'))
+      .then(() => expect(wrongLogged).to.be.false);
   });
+
+  it('should delete all test related users', () => {});
 });

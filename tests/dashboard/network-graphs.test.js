@@ -1,10 +1,19 @@
+// TO DO
+
+// Are all network interfaces present in the drop down?
+// Do they all have a graph
+// Change of interface in dropdown generates a new graph
+// Validate that data streams in (e.g. should wait a for the graph to update)
+// Validate empty graphs - need to think how this is possible
+
 const common = require('../common'),
       expect = require('chai').expect;
 
 describe('Network Graphs', () => {
   before(() => common.login(browser, 'admin', 'admin', 'local'));
+  after(() => common.logout());
   it('should navigate to Network Graphs', () =>
-    common.clickSidebarTab(browser, 'Network Graph'));
+    common.clickSidebarTab(browser, 'Network Graph', 'Network Graphs'));
 
   [
     //Eth0
@@ -26,5 +35,4 @@ describe('Network Graphs', () => {
       .then(title => expect(title).to.equal(test.expected));
     });
   });
-
 });
