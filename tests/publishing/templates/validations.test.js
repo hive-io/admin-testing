@@ -1,6 +1,7 @@
 'use strict';
 const common = require('../../common'),
-      expect = require('chai').expect;
+      expect = require('chai').expect,
+      Promise = require('bluebird');
 
 describe('Template Validations', () => {
   before(() => {
@@ -82,6 +83,19 @@ describe('Template Validations', () => {
       .then(() => browser.waitForExist('//*[@id="path-message"]', 10000));
   });
 
-  it('should clean up failed tests', () => {})
+  it('should clean up failed tests', () => {
+    return browser.waitForExist('//tbody')
+      .then(() => browser.elements('//button[text()="Remove"]'))
+      .then(elements => Promise.mapSeries(elements.value, () => {
+        return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
+          .then(() => common.waitAndClick('(//button[text()="Remove"])[1]'))
+          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
+          .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
+          .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
+          .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true))
+          .then(() => browser.refresh());  
+      }))
+      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));    
+  });
 
 });
