@@ -65,19 +65,39 @@ describe('Add Existing Template and Create Pool', () => {
   it('should check that the guests are created and are ready', () => {
     return common.clickSidebarTab(browser, 'Guest Management')
       .then(() => browser.waitUntil(() => {
-        return browser.refresh()
-          .then(() => browser.isExisting('//td[text()="APPLES0001"]'))
-          .then(ex => ex === true)
-      }))
-      .then(() => browser.waitForExist('//td[text()="APPLES0001"]/..//td[text()="Ready"]'))
+        return browser.isExisting('//td[text()="DROPS0001"]')
+          .then(ex => ex === true);
+      }, 60000))
+      .then(() => browser.waitForExist('//td[text()="DROPS0001"]/..//td[text()="Ready"]', 60000))
       .then(() => browser.refresh())
+      .then(() => browser.pause(750))
       .then(() => browser.getText('//div[@id="tg"]'))
       .then(text => expect(text).to.equal('1'))
   });
 
   it('should change the number of guests', () => {
-    
-  })
+   return common.clickSidebarTab(browser, 'Guest Pools')
+      .then(() => common.waitAndClick('//*[text()="DROPS"]/..//button[text()="Edit"]'))
+      .then(() => common.waitAndSet('//*[@id="minCloneDensity"]', '2'))
+      .then(() => browser.scroll(-200, 0))
+      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
+      .then(() => browser.isExisting('//*[@id="subBtn"]'))
+      .then(ex =>  ex ? common.waitAndClick('//*[@id="subBtn"]') : null)
+  });
+
+  it('should check that another guest is created', () => {
+    return common.clickSidebarTab(browser, 'Guest Management')
+      .then(() => browser.waitUntil(() => {
+        return browser.isExisting('//td[text()="DROPS0002"]')
+          .then(ex => ex === true);
+      }, 60000))
+      .then(() => browser.waitForExist('//td[text()="DROPS0002"]/..//td[text()="Ready"]', 60000))
+      .then(() => browser.refresh())
+      .then(() => browser.pause(750))
+      .then(() => browser.getText('//div[@id="tg"]'))
+      .then(text => expect(text).to.equal('2'))
+      .then(() => browser.pause(10000));
+  });
 
   it('should delete the pool', () => {
     return common.clickSidebarTab(browser, 'Guest Pools')
