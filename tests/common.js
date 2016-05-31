@@ -1,5 +1,5 @@
 'use strict';
-const chai = require('chai'), 
+const chai = require('chai'),
       expect = chai.expect,
       Promise = require('bluebird'),
       fs = Promise.promisifyAll(require('fs'));
@@ -20,7 +20,7 @@ module.exports = {
           .then(() => browser.waitForExist('//button[@type="submit"]'), 10000)
           .then(() => browser.click('//button[@type="submit"]'))
           .then(() => browser.waitForExist('//h1[@class="page-header"]'))
-          .then(() => browser.waitUntil(() => 
+          .then(() => browser.waitUntil(() =>
             browser.getText('//h1[@class="page-header"]')
             .then((text) => { return text === 'Overview'; })
           ,10000, 250) )
@@ -36,25 +36,25 @@ module.exports = {
     let existingTitle;
     let correctTitle = !!expectedTitle ? expectedTitle : tabText
     return browser.waitForExist('//h1[@class="page-header"]', 10000)
-      //CHECK IF IT IS ALREADY ON THE RIGHT PAGE
+    .then(() => browser.waitForVisible('//h1[@class="page-header"]', 10000))
       .then(() => browser.getText('//h1[@class="page-header"]'))
       .then((text) => existingTitle = text )
       .then(() => {
         if (existingTitle !== correctTitle) {
           return browser.getUrl()
             .then((url) => firstUrl = url )
-            .then(() => browser.waitUntil(() => 
+            .then(() => browser.waitUntil(() =>
               browser.getAttribute(`//a[contains(text(), "${tabText}")]`, 'onclick')
-                .then((cl) => { 
-                  if (!!cl) { return expect(cl).to.not.be.null } 
+                .then((cl) => {
+                  if (!!cl) { return expect(cl).to.not.be.null }
                   else{ console.log('onclick: ',cl); return expect(cl).to.not.be.null }})
             ,10000, 250))
-            .then(() => browser.click(`//a[contains(text(), "${tabText}")]`))
-            .then(() => browser.waitUntil(() => 
-              browser.getUrl().then((newurl) => firstUrl !== newurl ) 
+            .then(() => module.exports.waitAndClick(`//a[contains(text(), "${tabText}")]`))
+            .then(() => browser.waitUntil(() =>
+              browser.getUrl().then((newurl) => firstUrl !== newurl )
               ,10000, 250) )
             .then(() => browser.waitForExist('//h1[@class="page-header"]'), 10000)
-            .then(() => browser.waitUntil(() => 
+            .then(() => browser.waitUntil(() =>
               browser.getText('//h1[@class="page-header"]')
               .then((text) => text === correctTitle)
             ,10000, 250) )
@@ -100,7 +100,9 @@ module.exports = {
   },
 
   waitAndClick: function (xpath) {
-    return browser.waitForExist(xpath, 10000)
+    return browser.waitForExist(xpath, 30000)
+      .then(() => browser.waitForVisible(xpath, 30000))
+      .then(() => browser.waitForEnabled(xpath, 30000))
       .then(() => browser.getAttribute(xpath, 'type'))
       .then((type) => {
         if (type !== null){
@@ -113,18 +115,21 @@ module.exports = {
   },
 
   waitAndSet: function (xpath, value) {
-    return browser.waitForExist(xpath, 10000)
+    return browser.waitForExist(xpath, 20000)
       .then(() => browser.setValue(xpath, value));
   },
 
   checkAndDeleteFile: function (path) {
     return fs.statAsync(path)
-      .then(r => fs.unlink(path))
-  },
-
+      .catch(e => console.log('Didn`t find file: ' + e))
+      .then(() => fs.unlinkAsync(path))
+      .catch(e => console.log('Didn`t delete the file: ' + e));
+  }
 };
 
-/* USEFUL SNIPPITS:
+/*
+
+USEFUL SNIPPITS:
 
 print page source:
   // .then(() => browser.getSource().then(console.log))
