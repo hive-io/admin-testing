@@ -7,7 +7,7 @@ const common = require('../common'),
 describe('Add Existing Template and Create Pool', () => {
   before(() => {
     return common.isLoggedIn()
-      .then((loggedIn) => { 
+      .then((loggedIn) => {
         if(!loggedIn) {
           return common.login(browser, 'admin', 'admin', 'local')
         }
@@ -17,10 +17,10 @@ describe('Add Existing Template and Create Pool', () => {
 
   it('should add a template', () => {
     return browser.waitForVisible('//tbody')
-      .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
-      .then((ex) => { 
+      .then(() => browser.isExisting('//td[1 and text()="dynamism"]'))
+      .then((ex) => {
         if (!!ex) {
-          return common.waitAndClick('//td[1 and text()="cruller"]/..//button[@type="delete"]')
+          return common.waitAndClick('//td[1 and text()="dynamism"]/..//button[@type="delete"]')
             .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
             .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
             .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
@@ -29,15 +29,15 @@ describe('Add Existing Template and Create Pool', () => {
       })
       .then(() => common.waitAndClick('//button[@id="add_tmpl"]'))
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]','cruller'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]','dynamism'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]','192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(() => browser.pause(500))
       .then(() => browser.isVisible('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(ex => ex ? common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]') : null)
-      .then(() => browser.waitForExist('//td[1 and text()="cruller"]'))
-      .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
+      .then(() => browser.waitForExist('//td[1 and text()="dynamism"]'))
+      .then(() => browser.isExisting('//td[1 and text()="dynamism"]'))
       .then(ex => expect(ex).to.be.true);
   });
 
@@ -53,11 +53,10 @@ describe('Add Existing Template and Create Pool', () => {
    return common.clickSidebarTab(browser, 'Guest Pools')
      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
-     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','cruller'))
+     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','dynamism'))
      .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
-     .then(() => browser.setValue('//*[@id="seed"]', 'apples'))
-     // .then(() => browser.getText('//*[@id="seed"]', 'APPLES'))
+     .then(() => browser.setValue('//*[@id="seed"]', 'drops'))
      .then(() => browser.setValue('//*[@id="mem"]', '128'))
      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
      .then(() => browser.waitForExist('//td[1 and text()="donuts"]',20000))
@@ -86,20 +85,20 @@ describe('Add Existing Template and Create Pool', () => {
       .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
       .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
-      .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true));            
+      .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true));
   });
 
   it('should undefine and delete the template', () => {
     return common.clickSidebarTab(browser, 'Templates')
-      .then(() => common.waitAndClick('//td[1 and text()="cruller"]/..//td//button[text()="Unload"]'))
-      .then(() => common.waitAndClick('//td[1 and text()="cruller"]/..//td//button[text()="Remove"]'))
+      .then(() => common.waitAndClick('//td[1 and text()="dynamism"]/..//td//button[text()="Unload"]'))
+      .then(() => common.waitAndClick('//td[1 and text()="dynamism"]/..//td//button[text()="Remove"]'))
       .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
       .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true))
-      .then(() => browser.waitForExist('//td[1 and text()="cruller"]', 10000, true))
-      .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
-      .then(ex => expect(ex).to.be.false)
+      .then(() => browser.waitForExist('//td[1 and text()="dynamism"]', 10000, true))
+      .then(() => browser.isExisting('//td[1 and text()="dynamism"]'))
+      .then(ex => expect(ex).to.be.false);
   });
 
 });

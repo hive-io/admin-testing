@@ -16,10 +16,10 @@ describe('Pool Validations', () => {
 
   it('should add a template', () => {
     return browser.waitForVisible('//tbody')
-      .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
+      .then(() => browser.isExisting('//td[1 and text()="carnival"]'))
       .then((ex) => { 
         if (!!ex) {
-          return common.waitAndClick('//td[1 and text()="cruller"]/..//button[@type="delete"]')
+          return common.waitAndClick('//td[1 and text()="carnival"]/..//button[@type="delete"]')
             .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
             .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
             .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
@@ -28,12 +28,12 @@ describe('Pool Validations', () => {
       })
       .then(() => common.waitAndClick('//button[@id="add_tmpl"]'))
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]','cruller'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]','carnival'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]','192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
-      .then(() => browser.waitForExist('//td[1 and text()="cruller"]'))
-      .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
+      .then(() => browser.waitForExist('//td[1 and text()="carnival"]'))
+      .then(() => browser.isExisting('//td[1 and text()="carnival"]'))
       .then(ex => expect(ex).to.be.true);
   });
 
@@ -41,9 +41,9 @@ describe('Pool Validations', () => {
    return common.clickSidebarTab(browser, 'Guest Pools')
      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
-     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','cruller'))
-     .then(() => browser.setValue('//*[@id="minCloneDensity"]', '5'))
-     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '10'))
+     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','carnival'))
+     .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
+     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
      .then(() => browser.setValue('//*[@id="seed"]', 'devils'))
      .then(() => browser.setValue('//*[@id="mem"]', '128'))
      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
@@ -54,9 +54,9 @@ describe('Pool Validations', () => {
    return common.clickSidebarTab(browser, 'Guest Pools')
      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
-     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','cruller'))
-     .then(() => browser.setValue('//*[@id="minCloneDensity"]', '5'))
-     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '10'))
+     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','carnival'))
+     .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
+     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
      .then(() => browser.setValue('//*[@id="seed"]', 'chortles'))
      .then(() => browser.setValue('//*[@id="mem"]', '128'))
      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
@@ -80,14 +80,14 @@ describe('Pool Validations', () => {
 
   it('should unload and delete the template', () => {
     return common.clickSidebarTab(browser, 'Templates')
-      .then(() => common.waitAndClick('//td[1 and text()="cruller"]/..//td//button[text()="Unload"]'))
-      .then(() => common.waitAndClick('//td[1 and text()="cruller"]/..//td//button[text()="Remove"]'))
+      .then(() => common.waitAndClick('//td[1 and text()="carnival"]/..//td//button[text()="Unload"]'))
+      .then(() => common.waitAndClick('//td[1 and text()="carnival"]/..//td//button[text()="Remove"]'))
       .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
       .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true))
-      .then(() => browser.waitForExist('//td[1 and text()="cruller"]', 10000, true))
-      .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
+      .then(() => browser.waitForExist('//td[1 and text()="carnival"]', 10000, true))
+      .then(() => browser.isExisting('//td[1 and text()="carnival"]'))
       .then(ex => expect(ex).to.be.false)
   });
 
