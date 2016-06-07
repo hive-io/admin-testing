@@ -14,4 +14,12 @@ describe('Overview', () => {
   after(() => common.logout());
   it('should navigate to Overview', () =>
     common.clickSidebarTab(browser, 'Overview'));
+
+  it('should check that the graphs exist', () => {
+    return browser.waitForExist('(//*[local-name() = "svg"])[1]')
+      .then(() => browser.waitForExist('(//*[local-name() = "svg"])[2]'))
+      .then(() => browser.waitForExist('(//*[local-name() = "svg"])[3]'))
+      .then(() => browser.waitForExist('(//*[local-name() = "svg"])[4]'))
+      .then(() => browser.waitForExist('(//*[local-name() = "svg"])[5]'));
+  });
 });
