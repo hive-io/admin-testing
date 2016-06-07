@@ -8,6 +8,7 @@
   },
   "author": "Matt Broadstone <matt@hive-io.com>",
   "devDependencies": {
+    "eslint": "^2.11.1",
     "gulp": "^3.9.0",
     "gulp-webdriver": "^1.0.2",
     "selenium-standalone": "^4.8.0",
