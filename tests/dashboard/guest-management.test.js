@@ -1,8 +1,10 @@
-const common = require('../common'),
-      expect = require('chai').expect;
+const common = require('../common');
 
 describe('Guest Management', () => {
-  before(() => common.login(browser, 'admin', 'admin', 'local'));
+  before(() => {
+    return common.isLoggedIn()
+      .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null );
+  });
   after(() => common.logout());
   it('should navigate to Guest Management', () =>
     common.clickSidebarTab(browser, 'Guest Management'));

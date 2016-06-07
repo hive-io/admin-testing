@@ -1,18 +1,12 @@
 'use strict';
 const common = require('../common'),
-      expect = require('chai').expect,
-      Promise = require("bluebird"),
-      fs = Promise.promisifyAll(require("fs"));
+      expect = require('chai').expect;
 
-describe('Add Existing Template and Create Pool', () => {
+describe('Change Running Pool', () => {
   before(() => {
     return common.isLoggedIn()
-      .then((loggedIn) => {
-        if(!loggedIn) {
-          return common.login(browser, 'admin', 'admin', 'local')
-        }
-      })
-      .then(() => common.clickSidebarTab(browser, 'Templates'))
+      .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
+      .then(() => common.clickSidebarTab(browser, 'Templates'));
   });
 
   it('should add a template', () => {
@@ -26,11 +20,13 @@ describe('Add Existing Template and Create Pool', () => {
             .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
             .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true));
         }
+        return null;
       })
       .then(() => common.waitAndClick('//button[@id="add_tmpl"]'))
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]','dynamism'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]','192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'dynamism'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
+        '192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(() => browser.pause(500))
@@ -43,23 +39,24 @@ describe('Add Existing Template and Create Pool', () => {
 
   it('should set max clone density', () => {
     return common.clickSidebarTab(browser, 'Appliance', 'Appliance Settings')
-      .then(() => common.waitAndSet('//*[@id="maxCloneDensity"]', '100'))
+      .then(() => common.waitAndSet('//*[@id="maxCloneDensity"]', '20'))
       .then(() => common.waitAndClick('//button[text()="Submit"]'))
-      .then(() => browser.waitForExist('//*[@id="reconfigure"]', 10000, true))
-      .then(() => browser.refresh())
-  })
+      .then(() => browser.waitForExist('//*[@id="reconfigure"]', 15000, true))
+      .then(() => browser.pause(2500))
+      .then(() => browser.refresh());
+  });
 
   it('should create a new guest pool', () => {
-   return common.clickSidebarTab(browser, 'Guest Pools')
+    return common.clickSidebarTab(browser, 'Guest Pools')
      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
-     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','dynamism'))
+     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]', 'dynamism'))
      .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
      .then(() => browser.setValue('//*[@id="seed"]', 'drops'))
      .then(() => browser.setValue('//*[@id="mem"]', '128'))
      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
-     .then(() => browser.waitForExist('//td[1 and text()="donuts"]',20000))
+     .then(() => browser.waitForExist('//td[1 and text()="donuts"]', 10000));
   });
 
   it('should check that the guests are created and are ready', () => {
@@ -67,22 +64,22 @@ describe('Add Existing Template and Create Pool', () => {
       .then(() => browser.waitUntil(() => {
         return browser.isExisting('//td[text()="DROPS0001"]')
           .then(ex => ex === true);
-      }, 60000))
-      .then(() => browser.waitForExist('//td[text()="DROPS0001"]/..//td[text()="Ready"]', 60000))
+      }, 20000))
+      .then(() => browser.waitForExist('//td[text()="DROPS0001"]/..//td[text()="Ready"]', 20000))
       .then(() => browser.refresh())
       .then(() => browser.pause(750))
       .then(() => browser.getText('//div[@id="tg"]'))
-      .then(text => expect(text).to.equal('1'))
+      .then(text => expect(text).to.equal('1'));
   });
 
   it('should change the number of guests', () => {
-   return common.clickSidebarTab(browser, 'Guest Pools')
+    return common.clickSidebarTab(browser, 'Guest Pools')
       .then(() => common.waitAndClick('//*[text()="DROPS"]/..//button[text()="Edit"]'))
       .then(() => common.waitAndSet('//*[@id="minCloneDensity"]', '2'))
       .then(() => browser.scroll(-200, 0))
       .then(() => common.waitAndClick('//*[@id="subBtn"]'))
       .then(() => browser.isExisting('//*[@id="subBtn"]'))
-      .then(ex =>  ex ? common.waitAndClick('//*[@id="subBtn"]') : null)
+      .then(ex =>  ex ? common.waitAndClick('//*[@id="subBtn"]') : null);
   });
 
   it('should check that another guest is created', () => {
@@ -91,7 +88,7 @@ describe('Add Existing Template and Create Pool', () => {
         return browser.isExisting('//td[text()="DROPS0002"]')
           .then(ex => ex === true);
       }, 60000))
-      .then(() => browser.waitForExist('//td[text()="DROPS0002"]/..//td[text()="Ready"]', 60000))
+      .then(() => browser.waitForExist('//td[text()="DROPS0002"]/..//td[text()="Ready"]', 20000))
       .then(() => browser.refresh())
       .then(() => browser.pause(750))
       .then(() => browser.getText('//div[@id="tg"]'))
@@ -120,5 +117,4 @@ describe('Add Existing Template and Create Pool', () => {
       .then(() => browser.isExisting('//td[1 and text()="dynamism"]'))
       .then(ex => expect(ex).to.be.false);
   });
-
 });

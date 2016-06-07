@@ -6,18 +6,14 @@ const Promise = require('bluebird'),
 describe('Pool Validations', () => {
   before(() => {
     return common.isLoggedIn()
-      .then((loggedIn) => { 
-        if(!loggedIn) {
-          return common.login(browser, 'admin', 'admin', 'local')
-        }
-      })
-      .then(() => common.clickSidebarTab(browser, 'Templates'))
+      .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
+      .then(() => common.clickSidebarTab(browser, 'Templates'));
   });
 
   it('should add a template', () => {
     return browser.waitForVisible('//tbody')
       .then(() => browser.isExisting('//td[1 and text()="carnival"]'))
-      .then((ex) => { 
+      .then((ex) => {
         if (!!ex) {
           return common.waitAndClick('//td[1 and text()="carnival"]/..//button[@type="delete"]')
             .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
@@ -25,11 +21,13 @@ describe('Pool Validations', () => {
             .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
             .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true));
         }
+        return null;
       })
       .then(() => common.waitAndClick('//button[@id="add_tmpl"]'))
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]','carnival'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]','192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'carnival'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
+        '192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(() => browser.waitForExist('//td[1 and text()="carnival"]'))
@@ -88,7 +86,6 @@ describe('Pool Validations', () => {
       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true))
       .then(() => browser.waitForExist('//td[1 and text()="carnival"]', 10000, true))
       .then(() => browser.isExisting('//td[1 and text()="carnival"]'))
-      .then(ex => expect(ex).to.be.false)
+      .then(ex => expect(ex).to.be.false);
   });
-
 });

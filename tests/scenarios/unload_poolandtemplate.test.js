@@ -7,7 +7,7 @@
 // describe('Unload Pool and Template', () => {
 //   before(() => {
 //     return common.isLoggedIn()
-//       .then((loggedIn) => { 
+//       .then((loggedIn) => {
 //         if(!loggedIn) {
 //           return common.login(browser, 'admin', 'admin', 'local')
 //         }
@@ -20,7 +20,7 @@
 //       .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
 //       .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
 //       .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
-//       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true));            
+//       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true));
 //   });
 
 //   it('should undefine and delete the template', () => {

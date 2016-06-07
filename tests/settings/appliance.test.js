@@ -1,9 +1,11 @@
-const common = require('../common'),
-      expect = require('chai').expect;
+const common = require('../common');
 
 describe('Appliance', () => {
-  before(() => common.login(browser, 'admin', 'admin', 'local'));
-  after(() => common.logout());
+  before(() => {
+    return common.isLoggedIn()
+      .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null );
+  });
+  after(() => browser.refresh());
 
   it('should navigate to Appliance', () =>
     common.clickSidebarTab(browser, 'Appliance', 'Appliance Settings'));
