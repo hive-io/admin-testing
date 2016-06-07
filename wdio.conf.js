@@ -1,30 +1,35 @@
-var server = process.env.SERVER ?
-      'http://' + process.env.SERVER : 'http://tongster.synology.me';
-var specs = process.env.TEST ?
-      [process.env.TEST] : 
-      [
-        './tests/*.test.js',
-        './tests/**/*.test.js',
-        './tests/**/**/*.test.js'
-      ];
-      
+'use strict';
+let server = process.env.SERVER ?
+  'http://' + process.env.SERVER : 'http://192.168.11.100';
+
+let specs = process.env.TEST ?
+[process.env.TEST] :
+[
+  //'./tests/*.test.js',
+  './tests/**/*.test.js',
+  './tests/**/**/*.test.js'
+];
+
 exports.config = {
-    specs: specs,
-    exclude: [
-      // 'path/to/excluded/files'
-    ],
-    capabilities: [{
-        browserName: 'chrome'
-    }],
-    logLevel: 'silent',
-    coloredLogs: true,
-    screenshotPath: './errorShots/',
-    baseUrl: server, 
-    waitforTimeout: 30000,
-    framework: 'mocha',
-    reporter: 'spec',
-    mochaOpts: {
-      ui: 'bdd',
-      timeout: 240000
-    },
+  specs: specs,
+  exclude: [
+    // './tests/scenarios/*',
+    './tests/administration/users/*'
+    //'./tests/administration/realms/*'
+    // 'path/to/excluded/files'
+  ],
+  capabilities: [{
+    browserName: 'chrome'
+  }],
+  logLevel: 'silent',
+  coloredLogs: true,
+  screenshotPath: './errorShots/',
+  baseUrl: server,
+  waitforTimeout: 10000,
+  framework: 'mocha',
+  reporter: 'spec',
+  mochaOpts: {
+    ui: 'bdd',
+    timeout: 240000
+  }
 };
