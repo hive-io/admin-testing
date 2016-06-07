@@ -27,7 +27,7 @@ describe('Change Running Pool', () => {
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'dynamism'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
-        '192.168.11.4:/NFS/Guests/hio-tester.qcow2'))
+        `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/hio-tester.qcow2`))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(() => browser.pause(500))

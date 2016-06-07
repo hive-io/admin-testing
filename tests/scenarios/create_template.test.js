@@ -1,16 +1,37 @@
 'use strict';
-const common = require('../common');
+const common = require('../common'),
+      config = require('../../testconfig'),
+      p = require('path'),
+      crypto = require('crypto');
 
+
+function randomStr(n) {
+  const chars = 'abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789';
+  let len = chars.length;
+  let rnd = crypto.randomBytes(n);
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    out += chars[rnd[i] % len];
+  }
+  return out;
+}
+
+let tmp = p.join('/tmp', randomStr(10));
+let testTmpl = '/testing';
+let path = p.join(tmp, config.tmplPath, testTmpl);
+console.log(path);
 describe('Create New Template and Pool', () => {
   before(() => {
     return common.isLoggedIn()
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
-      .then(() => common.clickSidebarTab(browser, 'Templates'));
+      .then(() => common.clickSidebarTab(browser, 'Templates'))
+      .then(() => common.mkTmpDir(tmp, path));
   });
 
-  it('should check for and delete testing image', () => {
-    return common.checkAndDeleteFile('/nfs/Guests/testing');
+  after(() => {
+    return common.rmTmpDir(tmp, path);
   });
+
 
   it('should create a new template', () => {
     return browser.waitForVisible('//tbody')
@@ -22,13 +43,13 @@ describe('Create New Template and Pool', () => {
         .then((att) => att !== null)))
       .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="name"]', 'forest'))
       .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="path"]',
-        '192.168.11.4:/NFS/Guests/testing'))
+        `${config.nfsIP}:${config.nfsPath}${config.tmplPath}${testTmpl}`))
       .then(() => browser.selectByVisibleText('//*[@id="editTemplate"]//*[@id="os"]', 'Linux'))
       .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="dsize"]', '2'))
       .then(() => browser.click('//*[@id="editTemplate"]//*[@id="cdromChk"]'))
       .then(() => browser.waitForVisible('//*[@id="editTemplate"]//*[@id="cdrom"]'))
       .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="cdrom"]',
-        '192.168.11.4:/NFS/Iso/mini.iso'))
+        `${config.nfsIP}:${config.nfsPath}${config.isoPath}/mini.iso`))
       .then(() => common.waitAndClick('//*[@id="editTemplate"]//*[@id="subBtn"]'))
       .then(() => browser.isExisting('//*[@id="editTemplate"]//*[@id="subBtn"]'))
       .then((ex) => ex ? common.waitAndClick('//*[@id="subBtn"]') : null )
@@ -74,9 +95,5 @@ describe('Create New Template and Pool', () => {
       .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 2000, true))
       .then(() => browser.waitForExist('//td[1 and text()="forest"]', 10000, true));
-  });
-
-  it('should delete the created image on the NFS server', () => {
-    return common.checkAndDeleteFile('/nfs/Guests/testing');
   });
 });

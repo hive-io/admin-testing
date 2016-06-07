@@ -34,7 +34,7 @@ describe('Add Templates', () => {
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'cruller'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
-        `${NFSlocation}:/NFS/Guests/hio-tester.qcow2`))
+        `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/hio-tester.qcow2`))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(() => browser.waitForExist('//td[1 and text()="cruller"]'))
@@ -47,7 +47,7 @@ describe('Add Templates', () => {
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'cruller'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
-        `${NFSlocation}:/NFS/Guests/hio-tester.qcow2`))
+        `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/hio-tester.qcow2`))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(ex => ex ? common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]') : null )
@@ -62,7 +62,7 @@ describe('Add Templates', () => {
       .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'bearclaw'))
       .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
-        `${NFSlocation}:/NFS/Guests/w7-vsi`))
+        `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/w7-vsi`))
       .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Windows 7'))
       .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
       .then(() => browser.waitForExist('//td[1 and text()="bearclaw"]'))

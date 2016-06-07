@@ -2,7 +2,9 @@
 const chai = require('chai'),
       expect = chai.expect,
       Promise = require('bluebird'),
-      fs = Promise.promisifyAll(require('fs'));
+      fs = Promise.promisifyAll(require('fs')),
+      exec = Promise.promisify(require('child_process').exec),
+      config = require('../testconfig');
 chai.use(require('chai-string'));
 
 module.exports = {
@@ -87,11 +89,11 @@ module.exports = {
   createNewUser: function(name, realm, role, password) {
     return browser.waitForExist('//button[@id="add_user"]', 5000)
       .then(() => browser.click('//button[@id="add_user"]'))
-      .then(() => browser.setValue('//*[@id="add_user_form"]//input[@id="username"]', name))
-      .then(() => browser.selectByVisibleText('//*[@id="add_user_form"]//select[@id="arealm"]', realm))
-      .then(() => browser.selectByVisibleText('//*[@id="add_user_form"]//*[@id="role"]', role))
-      .then(() => browser.setValue('//*[@id="add_user_form"]//input[@id="password"]', password))
-      .then(() => browser.click('//*[@id="add_user_form"]//button[@type="submit"]'));
+      .then(() => browser.setValue('//*[@id="user_form"]//input[@id="username"]', name))
+      .then(() => browser.selectByVisibleText('//*[@id="user_form"]//select[@id="realm"]', realm))
+      .then(() => browser.selectByVisibleText('//*[@id="user_form"]//*[@id="role"]', role))
+      .then(() => browser.setValue('//*[@id="user_form"]//input[@id="password"]', password))
+      .then(() => browser.click('//*[@id="user_form"]//button[@type="submit"]'));
   },
 
   waitForOnClick: function(xpath) {
@@ -122,10 +124,33 @@ module.exports = {
       .then(() => browser.setValue(xpath, value));
   },
 
-  checkAndDeleteFile: function(path) {
+  mkTmpDir: function(tmp, path) {
+    let tpath = `${config.nfsIP}:${config.nfsPath}`;
+    return fs.mkdirAsync(`${tmp}`)
+      .then(() => exec(`mount ${tpath} ${tmp}`))
+      .catch(e => console.log('Failed to create and mount new dir.'))
+      .then(() => fs.statAsync(path))
+      .then(stat => {
+        if (stat.isFile()) {
+          return fs.unlinkAsync(path);
+        }
+        return null;
+      })
+      .catch(e => {});
+  },
+
+  rmTmpDir: function(tmp, path) {
     return fs.statAsync(path)
-      .catch(e => console.log('Didn`t find file: ' + e))
-      .then(() => fs.unlinkAsync(path))
-      .catch(e => console.log('Didn`t delete the file: ' + e));
+        .then(stat => {
+          if (stat.isFile()) {
+            return fs.unlinkAsync(path);
+          }
+          return null;
+        })
+      .catch(e => console.log('Tried to delete file before it exists.'))
+      .then(() => exec(`umount ${tmp}`))
+      .catch(e => console.log('Can`t unmount.'))
+      .then(() => fs.rmdirAsync(tmp))
+      .catch(e => console.log('Can`t remove dir.'));
   }
 };
