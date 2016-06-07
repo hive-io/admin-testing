@@ -36,44 +36,62 @@ describe('Pool Validations', () => {
   });
 
   it('should create a new guest pool', () => {
-   return common.clickSidebarTab(browser, 'Guest Pools')
-     .then(() => common.waitAndClick('//*[@id="add_pool"]'))
-     .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
-     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','carnival'))
-     .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
-     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
-     .then(() => browser.setValue('//*[@id="seed"]', 'devils'))
-     .then(() => browser.setValue('//*[@id="mem"]', '128'))
-     .then(() => common.waitAndClick('//*[@id="subBtn"]'))
-     .then(() => browser.waitForExist('//td[1 and text()="donuts"]'))
+    return common.clickSidebarTab(browser, 'Guest Pools')
+      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
+      .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
+      .then(() => browser.selectByVisibleText('//*[@id="goldImage"]', 'carnival'))
+      .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
+      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
+      .then(() => browser.setValue('//*[@id="seed"]', 'devils'))
+      .then(() => browser.setValue('//*[@id="mem"]', '128'))
+      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
+      .then(() => browser.waitForExist('//td[1 and text()="donuts"]'));
   });
 
   it('should fail to create a second guest pool with the same name', () => {
-   return common.clickSidebarTab(browser, 'Guest Pools')
-     .then(() => common.waitAndClick('//*[@id="add_pool"]'))
-     .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
-     .then(() => browser.selectByVisibleText('//*[@id="goldImage"]','carnival'))
-     .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
-     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
-     .then(() => browser.setValue('//*[@id="seed"]', 'chortles'))
-     .then(() => browser.setValue('//*[@id="mem"]', '128'))
-     .then(() => common.waitAndClick('//*[@id="subBtn"]'))
-     .then(() => browser.pause(1500))
-     .then(() => browser.waitForExist('(//td[1 and text()="donuts"])[2]', 1500, true))
+    return common.clickSidebarTab(browser, 'Guest Pools')
+      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
+      .then(() => browser.setValue('//*[@id="name"]', 'donuts'))
+      .then(() => browser.selectByVisibleText('//*[@id="goldImage"]', 'carnival'))
+      .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
+      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
+      .then(() => browser.setValue('//*[@id="seed"]', 'chortles'))
+      .then(() => browser.setValue('//*[@id="mem"]', '128'))
+      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
+      .then(() => browser.pause(1500))
+      .then(() => browser.isExisting('//*[@id="popup"]//button[text()="Close"]'))
+      .then(ex => !!ex ? common.waitAndClick('//*[@id="popup"]//button[text()="Close"]') : null)
+      .then(() => browser.waitForExist('(//td[1 and text()="donuts"])[2]', 1500, true));
+  });
+
+  it('should fail to create a second guest pool with the same seed name', () => {
+    return common.clickSidebarTab(browser, 'Guest Pools')
+      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
+      .then(() => browser.setValue('//*[@id="name"]', 'bronuts'))
+      .then(() => browser.selectByVisibleText('//*[@id="goldImage"]', 'carnival'))
+      .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
+      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
+      .then(() => browser.setValue('//*[@id="seed"]', 'devils'))
+      .then(() => browser.setValue('//*[@id="mem"]', '128'))
+      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
+      .then(() => browser.pause(1500))
+      .then(() => browser.isExisting('//*[@id="popup"]//button[text()="Close"]'))
+      .then(ex => !!ex ? common.waitAndClick('//*[@id="popup"]//button[text()="Close"]') : null)
+      .then(() => browser.waitForExist('(//td[1 and text()="donuts"])[2]', 1500, true));
   });
 
   it('should delete the pools', () => {
     return browser.elements('//td[1 and text()="donuts"]/..//button[text()="Delete"]')
-      // .then(els => console.log(els.value))
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
-          .then(() => common.waitAndClick('(//td[1 and text()="donuts"]/..//button[text()="Delete"])[1]'))
+          .then(() => common.waitAndClick(
+            '(//td[1 and text()="donuts"]/..//button[text()="Delete"])[1]'))
           .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
           .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
           .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
           .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true))
-          .then(() => browser.refresh())  
-      }))          
+          .then(() => browser.refresh());
+      }));
   });
 
   it('should unload and delete the template', () => {
