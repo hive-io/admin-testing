@@ -1,6 +1,7 @@
 'use strict';
 const common = require('../common'),
-      expect = require('chai').expect;
+      expect = require('chai').expect,
+      config = require('../../testconfig');
 
 describe('Test the Functionality of Guest Actions', () => {
   before(() => {
@@ -178,8 +179,10 @@ describe('Test the Functionality of Guest Actions', () => {
 
     it('should undefine and delete the template', () => {
       return common.clickSidebarTab(browser, 'Templates')
-        .then(() => common.waitAndClick('//td[1 and text()="coral"]/..//td//button[text()="Unload"]'))
-        .then(() => common.waitAndClick('//td[1 and text()="coral"]/..//td//button[text()="Remove"]'))
+        .then(() => common.waitAndClick(
+          '//td[1 and text()="coral"]/..//td//button[text()="Unload"]'))
+        .then(() => common.waitAndClick(
+          '//td[1 and text()="coral"]/..//td//button[text()="Remove"]'))
         .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
         .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
         .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))

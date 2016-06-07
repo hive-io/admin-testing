@@ -1,7 +1,8 @@
 'use strict';
 const Promise = require('bluebird'),
       common = require('../common'),
-      expect = require('chai').expect;
+      expect = require('chai').expect,
+      config = require('../../testconfig');
 
 describe('Pool Validations', () => {
   before(() => {

@@ -15,4 +15,3 @@ then:
 if you only want to run a certain test then postfix the test's with `only`. You can do this
 on suite-level (`describe.only`), or test-level (`it.only`). See the [mocha website](https://mochajs.org/)
 for more information.
-

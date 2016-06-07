@@ -7,10 +7,10 @@ const common = require('../../common'),
       Promise = require('bluebird'),
       expect = require('chai').expect;
 
-const changePass = '//td[text()="admin" and position()=1]/..//button[text()="change password"]',
+const changePass = '//td[text()="admin" and position()=1]/..//button[text()="Change Password"]',
       header = '//h1[@class="page-header"]';
 
-describe.only('Users Basic', () => {
+describe('Users Basic', () => {
   before(() => {
     return common.isLoggedIn()
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
@@ -26,8 +26,7 @@ describe.only('Users Basic', () => {
   });
 
   it('should allow password changes for admin', () => {
-    return common.waitAndClick(
-        changePass)
+    return common.waitAndClick(changePass)
       .then(() => browser.waitForExist(
         '//td[text()="admin" and position()=1]/..//form//input[@id="password"]'))
       .then(() => browser.setValue(
@@ -72,7 +71,7 @@ describe.only('Users Basic', () => {
       .then((exists) => !exists ? common.createNewUser(
         'readonly', 'local', 'readonly', 'admin') : null )
       .then(() => common.waitAndClick(
-        '//td[text()="readonly" and position()=1]/..//button[text()="change password"]'))
+        '//td[text()="readonly" and position()=1]/..//button[text()="Change Password"]'))
       .then(() => browser.waitForExist(
         '//td[text()="readonly" and position()=1]/..//input[@id="password"]'))
       .then(() => browser.setValue(
@@ -92,11 +91,11 @@ describe.only('Users Basic', () => {
   it('should allow password changes for readonly user', () => {
     return browser.waitForExist('//tbody')
       .then(() => browser.isExisting(
-        '//td[text()="readonly" and position()=1]/..//button[text()="change password"]'))
+        '//td[text()="readonly" and position()=1]/..//button[text()="Change Password"]'))
       .then((exists) => !exists ? common.createNewUser(
         'readonly', 'local', 'readonly', 'admin') : null )
       .then(() => common.waitAndClick(
-        '//td[text()="readonly" and position()=1]/..//button[text()="change password"]'))
+        '//td[text()="readonly" and position()=1]/..//button[text()="Change Password"]'))
       .then(() => browser.setValue(
         '//td[text()="readonly" and position()=1]/..//input[@id="password"]', 'password'))
       .then(() => common.waitAndClick(
@@ -111,13 +110,13 @@ describe.only('Users Basic', () => {
       //then log back in as admin and change it back
       .then(() => browser.waitForExist('//tbody'))
       .then(() => browser.waitForEnabled(
-        '//td[text()="readonly" and position()=1]/..//button[text()="change password"]',
+        '//td[text()="readonly" and position()=1]/..//button[text()="Change Password"]',
         1000, true))
       .then(() => common.logout())
       .then(() => common.login(browser, 'admin', 'admin', 'local'))
       .then(() => common.clickSidebarTab(browser, 'Users', 'System Users'))
       .then(() => common.waitAndClick(
-        '//td[text()="readonly" and position()=1]/..//button[text()="change password"]'))
+        '//td[text()="readonly" and position()=1]/..//button[text()="Change Password"]'))
       .then(() => browser.waitForExist(
         '//td[text()="readonly" and position()=1]/..//input[@id="password"]'))
       .then(() => browser.setValue(
@@ -135,7 +134,7 @@ describe.only('Users Basic', () => {
       .then(() => common.clickSidebarTab(browser, 'Users', 'System Users'))
       .then(() => browser.waitForExist('//tbody'))
       .then(() => browser.isExisting(
-        '//td[text()="readonly" and position()=1]/..//button[text()="change password"]'))
+        '//td[text()="readonly" and position()=1]/..//button[text()="Change Password"]'))
       .then((exists) => !exists ? common.createNewUser(
         'readonly', 'local', 'readonly', 'admin') : null )
       .then(() => common.waitAndClick(

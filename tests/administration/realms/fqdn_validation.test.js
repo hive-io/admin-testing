@@ -5,7 +5,7 @@
 const common = require('../../common'),
       Promise = require('bluebird');
 
-const addRealmButton = '//*[@id="add_realm"]',
+const addRealmButton = '//*[@id="add_user"]',
       realmName = '//*[@id="name"]',
       fqdn = '//*[@id="fqdn"]',
       submit = '//*[@id="realm_form"]/button[1]',

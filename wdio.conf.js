@@ -1,20 +1,12 @@
 'use strict';
-let server = process.env.SERVER ?
-  'http://' + process.env.SERVER : 'http://192.168.11.100';
 
-let specs = process.env.TEST ?
-[process.env.TEST] :
-[
-  //'./tests/*.test.js',
-  './tests/**/*.test.js',
-  './tests/**/**/*.test.js'
-];
+const testconfig = require('./testconfig');
 
 exports.config = {
-  specs: specs,
+  specs: testconfig.specs,
   exclude: [
     // './tests/scenarios/*',
-    './tests/administration/users/*'
+    // './tests/administration/users/*'
     //'./tests/administration/realms/*'
     // 'path/to/excluded/files'
   ],
@@ -24,7 +16,7 @@ exports.config = {
   logLevel: 'silent',
   coloredLogs: true,
   screenshotPath: './errorShots/',
-  baseUrl: server,
+  baseUrl: testconfig.server,
   waitforTimeout: 10000,
   framework: 'mocha',
   reporter: 'spec',

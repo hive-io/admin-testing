@@ -1,6 +1,7 @@
 'use strict';
 const common = require('../common'),
-      expect = require('chai').expect;
+      expect = require('chai').expect,
+      config = require('../../testconfig');
 
 describe('Change Running Pool', () => {
   before(() => {

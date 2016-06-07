@@ -1,9 +1,8 @@
 'use strict';
 const Promise = require('bluebird'),
       common = require('../common'),
-      expect = require('chai').expect;
-
-let NFSlocation = !!process.env.NFS ? process.env.NFS : '192.168.11.4';
+      expect = require('chai').expect,
+      config = require('../../testconfig');
 
 describe('Add Templates', () => {
   before(() => {
