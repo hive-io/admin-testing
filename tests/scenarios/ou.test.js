@@ -4,7 +4,7 @@ const Promise = require('bluebird'),
       expect = require('chai').expect,
       config = require('../../testconfig');
 
-const addRealmButton = '//*[@id="add_user"]',
+const addRealmButton = '//*[@id="add_realm"]',
       realmName = '//*[@id="name"]',
       fqdn = '//*[@id="fqdn"]',
       submit = '//*[@id="realm_form"]/button[1]';
@@ -19,10 +19,7 @@ describe('OU Validation', () => {
       .then(elements => Promise.mapSeries(elements.value, () => {
         return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
           .then(() => common.waitAndClick('(//button[text()="Remove"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
-          .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
-          .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }))
       .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true))
@@ -72,10 +69,7 @@ describe('OU Validation', () => {
       .then(elements => Promise.mapSeries(elements.value, () => {
         return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 30000, true)
           .then(() => common.waitAndClick('(//button[text()="Remove"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]', 30000))
-          .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]', 30000))
-          .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
-          .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 30000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }))
       .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true))
@@ -85,9 +79,7 @@ describe('OU Validation', () => {
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
           .then(() => common.waitAndClick('(//button[text()="Delete"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
-          .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
   });
