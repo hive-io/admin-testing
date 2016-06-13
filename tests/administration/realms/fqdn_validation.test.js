@@ -47,7 +47,8 @@ describe('FQDN Validation', () => {
       .then(() => common.waitAndSet(fqdn, 'strawberries'))
       .then(() => common.waitAndClick(submit))
       .then(() => browser.pause(2000))
-      .then(() => browser.waitForExist(realmVerified, 5000, true));
+      .then(() => browser.waitForExist(realmVerified, 5000, true))
+      .then(() => browser.waitForExist(realmFailed));
   });
 
   it('should not allow bogus fqdns', () => {
@@ -57,6 +58,7 @@ describe('FQDN Validation', () => {
       .then(() => common.waitAndClick(submit))
       .then(() => browser.pause(2000))
       .then(() => browser.waitForExist(realmVerified, 5000, true))
+      .then(() => browser.waitForExist(realmFailed))
       .then(() => browser.refresh())
       .then(() => common.waitAndClick(addRealmButton))
       .then(() => common.waitAndSet(realmName, 'hiveio'))
@@ -64,13 +66,15 @@ describe('FQDN Validation', () => {
       .then(() => common.waitAndClick(submit))
       .then(() => browser.pause(2000))
       .then(() => browser.waitForExist(realmVerified, 5000, true))
+      .then(() => browser.waitForExist(realmFailed))
       .then(() => browser.refresh())
       .then(() => common.waitAndClick(addRealmButton))
       .then(() => common.waitAndSet(realmName, 'hiveio'))
       .then(() => common.waitAndSet(fqdn, '127.0.0.1'))
       .then(() => browser.waitForExist(submit))
       .then(() => common.waitAndClick(submit))
-      .then(() => browser.waitForExist(realmVerified, 5000, true));
+      .then(() => browser.waitForExist(realmVerified, 5000, true))
+      .then(() => browser.waitForExist(realmFailed));
   });
 
   it('should delete all realms', () => {
