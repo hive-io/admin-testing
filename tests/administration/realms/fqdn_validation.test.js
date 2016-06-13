@@ -5,13 +5,13 @@
 const common = require('../../common'),
       Promise = require('bluebird');
 
-const addRealmButton = '//*[@id="add_user"]',
+const addRealmButton = '//*[@id="add_realm"]',
       realmName = '//*[@id="name"]',
       fqdn = '//*[@id="fqdn"]',
       submit = '//*[@id="realm_form"]/button[1]',
       realmVerified = '//*[@id="fqdn-message" and contains(text()," Realm verified.")]',
       modalBackdrop = '//*[contains(@class,"modal-backdrop")]',
-      confirmBtn = '//*[@id="popup"]//button[text()="Confirm"]';
+      realmFailed = '//*[@id="fqdn-message" and contains(text(),"Verification failed.")]';
 
 describe('FQDN Validation', () => {
   beforeEach(() => {
@@ -29,9 +29,7 @@ describe('FQDN Validation', () => {
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist(modalBackdrop, 3000, true)
           .then(() => common.waitAndClick('(//button[text()="Delete"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => common.waitAndClick(confirmBtn))
-          .then(() => browser.waitForExist(modalBackdrop, 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
   });
@@ -80,9 +78,7 @@ describe('FQDN Validation', () => {
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist(modalBackdrop, 3000, true)
           .then(() => common.waitAndClick('(//button[text()="Delete"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => common.waitAndClick(confirmBtn))
-          .then(() => browser.waitForExist(modalBackdrop, 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
   });

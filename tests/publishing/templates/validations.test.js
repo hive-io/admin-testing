@@ -95,10 +95,7 @@ describe('Template Validations', () => {
       .then(elements => Promise.mapSeries(elements.value, () => {
         return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
           .then(() => common.waitAndClick('(//button[text()="Remove"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
-          .then(() => common.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
-          .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }))
       .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));

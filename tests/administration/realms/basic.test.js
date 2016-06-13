@@ -4,7 +4,7 @@
 const common = require('../../common'),
       Promise = require('bluebird');
 
-const addRealmButton = '//*[@id="add_user"]',
+const addRealmButton = '//*[@id="add_realm"]',
       realmName = '//*[@id="name"]',
       fqdn = '//*[@id="fqdn"]',
       submit = '//*[@id="realm_form"]/button[1]',
@@ -26,10 +26,7 @@ describe('Realms Basic', () => {
     return browser.elements('//button[text()="Delete"]')
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist(modalBackdrop, 3000, true)
-          .then(() => common.waitAndClick('(//button[text()="Delete"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => common.waitAndClick(confirmBtn))
-          .then(() => browser.waitForExist(modalBackdrop, 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
   });
@@ -84,9 +81,7 @@ describe('Realms Basic', () => {
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist(modalBackdrop, 3000, true)
           .then(() => common.waitAndClick('(//button[text()="Delete"])[1]'))
-          .then(() => browser.waitForExist('//*[@id="popup" and @style="display: block;"]'))
-          .then(() => common.waitAndClick(confirmBtn))
-          .then(() => browser.waitForExist(modalBackdrop, 3000, true))
+          .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
   });

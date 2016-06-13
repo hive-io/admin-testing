@@ -39,6 +39,7 @@ describe('User Validations', () => {
     let wrongLogged;
     return browser.refresh()
       .then(() => common.createNewUser(login.name, login.realm, login.role, login.pass))
+      .then(() => browser.refresh())
       .then(() => common.createNewUser(login.name, login.realm, login.role, login.wrongpass))
       .then(() => common.logout())
       .then(() => common.login(browser, login.name, login.wrongpass, 'local' ))
