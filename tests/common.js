@@ -4,10 +4,22 @@ const chai = require('chai'),
       Promise = require('bluebird'),
       fs = Promise.promisifyAll(require('fs')),
       exec = Promise.promisify(require('child_process').exec),
-      config = require('../testconfig');
+      config = require('../testconfig'),
+      crypto = require('crypto');
 chai.use(require('chai-string'));
 
 module.exports = {
+
+  randomStr: function(n) {
+    const chars = 'abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789';
+    let len = chars.length;
+    let rnd = crypto.randomBytes(n);
+    let out = '';
+    for (let i = 0; i < n; i++) {
+      out += chars[rnd[i] % len];
+    }
+    return out;
+  },
 
   login: function(browser, username, password, domain) {
     return module.exports.isLoggedIn()
@@ -88,6 +100,7 @@ module.exports = {
 
   createNewUser: function(name, realm, role, password) {
     return browser.waitForExist('//button[@id="add_user"]', 5000)
+      .then(() => browser.waitForVisible('//button[@id="add_user"]'))
       .then(() => browser.click('//button[@id="add_user"]'))
       .then(() => browser.setValue('//*[@id="user_form"]//input[@id="username"]', name))
       .then(() => browser.selectByVisibleText('//*[@id="user_form"]//select[@id="realm"]', realm))
@@ -128,7 +141,6 @@ module.exports = {
     let tpath = `${config.nfsIP}:${config.nfsPath}`;
     return fs.mkdirAsync(`${tmp}`)
       .then(() => exec(`mount ${tpath} ${tmp}`))
-      .catch(e => console.log('Failed to create and mount new dir.'))
       .then(() => fs.statAsync(path))
       .then(stat => {
         if (stat.isFile()) {
@@ -136,11 +148,12 @@ module.exports = {
         }
         return null;
       })
-      .catch(e => {});
+      .catch(e => console.log('Didn`t delete the template.'));
   },
 
   rmTmpDir: function(tmp, path) {
-    return fs.statAsync(path)
+    return browser.pause(3000)
+      .then(() => fs.statAsync(path))
         .then(stat => {
           if (stat.isFile()) {
             return fs.unlinkAsync(path);
@@ -149,8 +162,37 @@ module.exports = {
         })
       .catch(e => console.log('Tried to delete file before it exists.'))
       .then(() => exec(`umount ${tmp}`))
-      .catch(e => console.log('Can`t unmount.'))
       .then(() => fs.rmdirAsync(tmp))
       .catch(e => console.log('Can`t remove dir.'));
+  },
+
+  mountTempDir: function(tmp) {
+    let tpath = `${config.nfsIP}:${config.nfsPath}`;
+    return fs.mkdirAsync(`${tmp}`)
+      .then(() => exec(`mount ${tpath} ${tmp}`));
+  },
+
+  unmountTempDir: function(tmp) {
+    return exec(`umount ${tmp}`)
+      .then(() => fs.rmdirAsync(tmp))
+      .catch(e => console.log('Can`t remove dir.'));
+  },
+
+  deleteFile: function(path) {
+    return fs.statAsync(path)
+      .then(stat => {
+        if (stat.isFile()) {
+          return fs.unlinkAsync(path);
+        }
+        return null;
+      })
+      .catch(e => console.log(`Failed to delete file at: ${path}`));
+  },
+
+  confirmPopup: function() {
+    return browser.waitForExist('//*[@id="popup" and @style="display: block;"]')
+      .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
+      .then(() => module.exports.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
+      .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 20000, true));
   }
 };

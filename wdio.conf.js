@@ -5,7 +5,8 @@ const testconfig = require('./testconfig');
 exports.config = {
   specs: testconfig.specs,
   exclude: [
-    // './tests/scenarios/*',
+    // './tests/scenarios/convert_temp.test.js'
+    // './tests/scenarios/*'
     // './tests/administration/users/*'
     //'./tests/administration/realms/*'
     // 'path/to/excluded/files'
