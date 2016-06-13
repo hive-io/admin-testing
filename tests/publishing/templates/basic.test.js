@@ -9,7 +9,7 @@ describe('Templates', () => {
     return common.isLoggedIn()
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null );
   });
-  after(() => common.logout());
+  after(() => browser.refresh());
 
   it('should navigate to Templates', () => common.clickSidebarTab(browser, 'Templates'));
 

@@ -7,7 +7,8 @@ const newTmpl = '//button[@id="new_tmpl"]',
       submitBtn = '//*[@id="subBtn"]',
       name = '//*[@id="name"]',
       path = '//*[@id="path"]',
-      addTmplBtn = '//*[@id="add_tmpl"]';
+      addTmplBtn = '//*[@id="add_tmpl"]',
+      pathMsg = '//span[@id="path-message"]';
 
 describe('Template Validations', () => {
   before(() => {
@@ -29,8 +30,9 @@ describe('Template Validations', () => {
   it('should refuse an invalid template path in new template', () => {
     return common.waitAndClick(newTmpl)
       .then(() => browser.setValue('//form[@id="newTmplForm"]//input[@id="path"]', 'invalid input'))
-      .then(() => browser.click('//form[@id="newTmplForm"]//input[@name="name"]'))
-      .then(() => browser.getText('//span[@id="path-message"]'))
+      .then(() => browser.click('//form[@id="newTmplForm"]//input[@id="name"]'))
+      .then(() => browser.pause(750))
+      .then(() => browser.getText(pathMsg))
       .then((text) => expect(text).to.equal("Path verification failed - can't mount destination."));
   });
 
@@ -77,16 +79,16 @@ describe('Template Validations', () => {
     return common.waitAndClick(addTmplBtn)
       .then(() => browser.setValue(path, 'All Hail Slithis!'))
       .then(() => common.waitAndClick(submitBtn))
-      .then(() => browser.waitForExist('//*[@id="path-message"]', 10000))
+      .then(() => browser.waitForExist(pathMsg, 10000))
       .then(() => common.waitAndClick('//form[@id="add_tmpl_form"]//button[2 and text()="Cancel"]'));
   });
 
   it('should refuse an add template form with a name and an invalid path', () => {
     return common.waitAndClick(addTmplBtn)
-      .then(() => browser.setValue(name, 'All Hail Slithis!'))
       .then(() => browser.setValue(path, 'All Hail Slithis!'))
+      .then(() => browser.setValue(name, 'All Hail Slithis!'))
       .then(() => common.waitAndClick(submitBtn))
-      .then(() => browser.waitForExist('//*[@id="path-message"]', 10000));
+      .then(() => browser.waitForExist(pathMsg, 10000));
   });
 
   it('should clean up failed tests', () => {
