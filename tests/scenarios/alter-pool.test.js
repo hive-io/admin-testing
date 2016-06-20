@@ -4,12 +4,22 @@ const common = require('../common'),
       expect = require('chai').expect,
       config = require('../../testconfig');
 
+let addBtn = '//button[@id="add_tmpl"]',
+    addTmpForm = '//*[@id="add_tmpl_form"]',
+    addName = '//*[@id="add_tmpl_form"]//*[@id="name"]',
+    addPath = '//*[@id="add_tmpl_form"]//*[@id="path"]',
+    submit = '//*[@id="add_tmpl_form"]//*[@id="subBtn"]',
+    os = '//*[@id="os"]',
+    genSubmit = '//*[@id="subBtn"]';
+
 describe('Alter Running Pool', () => {
   before(() => {
     return common.isLoggedIn()
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
       .then(() => common.clickSidebarTab(browser, 'Templates'));
   });
+
+  after(() => browser.refresh());
 
   it('should add a template', () => {
     return browser.waitForVisible('//tbody')
@@ -21,16 +31,16 @@ describe('Alter Running Pool', () => {
         }
         return null;
       })
-      .then(() => common.waitAndClick('//button[@id="add_tmpl"]'))
-      .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'dynamism'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
+      .then(() => common.waitAndClick(addBtn))
+      .then(() => browser.waitForExist(addTmpForm))
+      .then(() => browser.setValue(addName, 'dynamism'))
+      .then(() => browser.setValue(addPath,
         `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/hio-tester.qcow2`))
-      .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
-      .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
+      .then(() => browser.selectByVisibleText(os, 'Linux'))
+      .then(() => common.waitAndClick(submit))
       .then(() => browser.pause(500))
-      .then(() => browser.isVisible('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
-      .then(ex => ex ? common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]') : null)
+      .then(() => browser.isVisible(submit))
+      .then(ex => ex ? common.waitAndClick(submit) : null)
       .then(() => browser.waitForExist('//td[1 and text()="dynamism"]'))
       .then(() => browser.isExisting('//td[1 and text()="dynamism"]'))
       .then(ex => expect(ex).to.be.true);
@@ -54,16 +64,13 @@ describe('Alter Running Pool', () => {
      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
      .then(() => browser.setValue('//*[@id="seed"]', 'drops'))
      .then(() => browser.setValue('//*[@id="mem"]', '128'))
-     .then(() => common.waitAndClick('//*[@id="subBtn"]'))
+     .then(() => common.waitAndClick(genSubmit))
      .then(() => browser.waitForExist('//td[1 and text()="donuts"]', 10000));
   });
 
   it('should check that the guests are created and are ready', () => {
     return common.clickSidebarTab(browser, 'Guest Management')
-      .then(() => browser.waitUntil(() => {
-        return browser.isExisting('//td[text()="DROPS0001"]')
-          .then(ex => ex === true);
-      }, 20000))
+      .then(() => browser.waitForExist('//td[text()="DROPS0001"]', 24000))
       .then(() => browser.waitForExist('//td[text()="DROPS0001"]/..//td[text()="Ready"]', 20000))
       .then(() => browser.refresh())
       .then(() => browser.pause(750))
@@ -76,9 +83,9 @@ describe('Alter Running Pool', () => {
       .then(() => common.waitAndClick('//*[text()="DROPS"]/..//button[text()="Edit"]'))
       .then(() => common.waitAndSet('//*[@id="minCloneDensity"]', '2'))
       .then(() => browser.scroll(-200, 0))
-      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
-      .then(() => browser.isExisting('//*[@id="subBtn"]'))
-      .then(ex =>  ex ? common.waitAndClick('//*[@id="subBtn"]') : null);
+      .then(() => common.waitAndClick(genSubmit))
+      .then(() => browser.isExisting(genSubmit))
+      .then(ex =>  ex ? common.waitAndClick(genSubmit) : null);
   });
 
   it('should check that another guest is created', () => {
