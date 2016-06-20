@@ -4,15 +4,16 @@ const testconfig = require('./testconfig');
 
 exports.config = {
   specs: testconfig.specs,
-  exclude: [
+  exclude: testconfig.exclude,
+  // [
     // './tests/scenarios/convert_temp.test.js'
     // './tests/scenarios/*'
     // './tests/administration/users/*'
-    //'./tests/administration/realms/*'
+    // './tests/administration/realms/*'
     // 'path/to/excluded/files'
-  ],
+  // ],
   capabilities: [{
-    browserName: 'chrome'
+    browserName: testconfig.browser
   }],
   logLevel: 'silent',
   coloredLogs: true,
@@ -23,6 +24,6 @@ exports.config = {
   reporter: 'spec',
   mochaOpts: {
     ui: 'bdd',
-    timeout: 240000
+    timeout: 480000
   }
 };
