@@ -9,8 +9,7 @@ const addRealmButton = '//*[@id="add_realm"]',
       fqdn = '//*[@id="fqdn"]',
       submit = '//*[@id="realm_form"]/button[1]',
       fqdnMessage = '//*[@id="fqdn-message"]',
-      modalBackdrop = '//*[contains(@class,"modal-backdrop")]',
-      confirmBtn = '//*[@id="popup"]//button[text()="Confirm"]';
+      modalBackdrop = '//*[contains(@class,"modal-backdrop")]';
 
 describe('Realms Basic', () => {
   beforeEach(() => {
@@ -26,25 +25,10 @@ describe('Realms Basic', () => {
     return browser.elements('//button[text()="Delete"]')
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist(modalBackdrop, 3000, true)
+          .then(() => common.waitAndClick('//button[text()="Delete"][1]'))
           .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
-  });
-
-  it('should create a valid realm', () => {
-    return common.waitAndClick(addRealmButton)
-      .then(() => common.waitAndSet(realmName, 'hiveio'))
-      .then(() => common.waitAndSet(fqdn, 'hiveio.local'))
-      .then(() => common.waitAndClick(submit))
-      .then(() => browser.waitForExist(
-        '//*[@id="fqdn-message" and contains(text()," Realm verified.")]', 5000))
-      .then(() => common.waitAndClick(submit))
-      .then(() => browser.waitForExist('//*[@id="page-wrapper"]//tbody'))
-      .then(() => browser.isExisting('//td[1 and text()="hiveio"]'))
-      .then(ex2 => {
-        if (ex2) { console.log('AUTOMATIC CAPITALIZATION FAILED, REALM STILL CREATED.'); }
-      })
-      .then(() => browser.waitForExist('//td[text()="HIVEIO"]'));
   });
 
   it('should return to page once add realm is cancelled', () => {
