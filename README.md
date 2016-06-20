@@ -9,9 +9,9 @@ if you don't already have gulp installed:
 `npm install -g gulp`
 
 then:
-`gulp test`
+`sudo gulp test`
 
 # notes
 if you only want to run a certain test then postfix the test's with `only`. You can do this
-on suite-level (`describe.only`), or test-level (`it.only`). See the [mocha website](https://mochajs.org/)
-for more information.
+on suite-level (`describe.only`), or test-level (`it.only`). See the
+[mocha website](https://mochajs.org/) for more information.

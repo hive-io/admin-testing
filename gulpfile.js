@@ -14,14 +14,13 @@ gulp.task('selenium', done => {
   });
 });
 
-gulp.task('e2e', ['selenium'], () => {
+gulp.task('test', ['selenium'], () => {
   return gulp.src('wdio.conf.js')
     .pipe(webdriver()).on('error', () => {
       seleniumServer.kill();
       process.exit(1);
+    })
+    .once('end', () => {
+      seleniumServer.kill();
     });
-});
-
-gulp.task('test', ['e2e'], () => {
-  seleniumServer.kill();
 });
