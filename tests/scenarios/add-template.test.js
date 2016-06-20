@@ -4,6 +4,13 @@ const Promise = require('bluebird'),
       expect = require('chai').expect,
       config = require('../../testconfig');
 
+let addBtn = '//button[@id="add_tmpl"]',
+    addTmpForm = '//*[@id="add_tmpl_form"]',
+    addName = '//*[@id="add_tmpl_form"]//*[@id="name"]',
+    addPath = '//*[@id="add_tmpl_form"]//*[@id="path"]',
+    submit = '//*[@id="add_tmpl_form"]//*[@id="subBtn"]',
+    os = '//*[@id="os"]';
+
 describe('Add Templates', () => {
   before(() => {
     return common.isLoggedIn()
@@ -27,27 +34,26 @@ describe('Add Templates', () => {
 
   it('should add a Linux template', () => {
     return browser.refresh()
-      .then(() => common.waitAndClick('//button[@id="add_tmpl"]'))
-      .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'cruller'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
+      .then(() => common.waitAndClick(addBtn))
+      .then(() => browser.waitForExist(addTmpForm))
+      .then(() => browser.setValue(addName, 'cruller'))
+      .then(() => browser.setValue(addPath,
         `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/hio-tester.qcow2`))
-      .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
-      .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
+      .then(() => browser.selectByVisibleText(os, 'Linux'))
+      .then(() => common.waitAndClick(submit))
       .then(() => browser.waitForExist('//td[1 and text()="cruller"]'))
       .then(() => browser.isExisting('//td[1 and text()="cruller"]'))
       .then(ex => expect(ex).to.be.true);
   });
 
   it('should fail to add the same Linux template', () => {
-    return common.waitAndClick('//button[@id="add_tmpl"]')
-      .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'cruller'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
+    return common.waitAndClick(addBtn)
+      .then(() => browser.waitForExist(addTmpForm))
+      .then(() => browser.setValue(addName, 'cruller'))
+      .then(() => browser.setValue(addPath,
         `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/hio-tester.qcow2`))
-      .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Linux'))
-      .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
-      .then(ex => ex ? common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]') : null )
+      .then(() => browser.selectByVisibleText(os, 'Linux'))
+      .then(() => common.waitAndClick(submit))
       .then(() => browser.waitForExist('//td[1 and text()="cruller"]'))
       .then(() => browser.isExisting('(//td[1 and text()="cruller"])[2]'))
       .then(ex => expect(ex).to.be.false)
@@ -55,13 +61,13 @@ describe('Add Templates', () => {
   });
 
   it('should add a Windows template', () => {
-    return common.waitAndClick('//button[@id="add_tmpl"]')
-      .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', 'bearclaw'))
-      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="path"]',
+    return common.waitAndClick(addBtn)
+      .then(() => browser.waitForExist(addTmpForm))
+      .then(() => browser.setValue(addName, 'bearclaw'))
+      .then(() => browser.setValue(addPath,
         `${config.nfsIP}:${config.nfsPath}${config.tmplPath}/w7-vsi`))
-      .then(() => browser.selectByVisibleText('//*[@id="os"]', 'Windows 7'))
-      .then(() => common.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
+      .then(() => browser.selectByVisibleText(os, 'Windows 7'))
+      .then(() => common.waitAndClick(submit))
       .then(() => browser.waitForExist('//td[1 and text()="bearclaw"]'))
       .then(() => browser.isExisting('//td[1 and text()="bearclaw"]'))
       .then(ex => expect(ex).to.be.true);
