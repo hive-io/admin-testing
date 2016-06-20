@@ -45,7 +45,7 @@ describe('OU Validation', () => {
             .then(() => common.waitAndSet(fqdn, 'hiveio.local'))
             .then(() => common.waitAndClick(submit))
             .then(() => browser.waitForExist(
-              '//*[@id="fqdn-message" and contains(text()," Realm verified.")]', 5000))
+              '//*[@id="fqdn-message" and contains(text()," Realm verified.")]', 15000))
             .then(() => common.waitAndClick(submit))
             .then(() => browser.waitForExist('//td[text()="HIVEIO"]'));
         }

@@ -11,6 +11,8 @@ describe('Pool Validations', () => {
       .then(() => common.clickSidebarTab(browser, 'Templates'));
   });
 
+  after(() => browser.refresh());
+
   it('should add a template', () => {
     return browser.waitForVisible('//tbody')
       .then(() => browser.isExisting('//td[1 and text()="carnival"]'))

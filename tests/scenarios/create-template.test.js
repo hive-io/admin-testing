@@ -16,7 +16,8 @@ describe('Create New Template and Pool', () => {
   });
 
   after(() => {
-    return common.rmTmpDir(tmp, path);
+    return common.rmTmpDir(tmp, path)
+    .then(() => browser.refresh());
   });
 
 

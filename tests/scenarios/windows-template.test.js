@@ -47,7 +47,7 @@ describe('Add Windows Template and Test Pool', () => {
       .then(() => browser.refresh());
   });
 
-  it('should create a new guest pool', () => {
+  it('should create a new guest pool with no realm', () => {
     return common.clickSidebarTab(browser, 'Guest Pools')
      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', 'mola'))
