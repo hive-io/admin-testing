@@ -55,17 +55,18 @@ describe('Add Windows Template and Test Pool', () => {
      .then(() => browser.setValue('//*[@id="minCloneDensity"]', '1'))
      .then(() => browser.setValue('//*[@id="maxCloneDensity"]', '2'))
      .then(() => browser.setValue('//*[@id="seed"]', 'EELS'))
-     .then(() => browser.setValue('//*[@id="mem"]', '2048'))
+     .then(() => browser.setValue('//*[@id="mem"]', '4096'))
+     .then(() => browser.selectByVisibleText('//*[@id="Domain"]', 'None'))
      .then(() => common.waitAndClick('//*[@id="subBtn"]'))
      .then(() => browser.waitForExist('//td[1 and text()="mola"]', 10000))
      .then(() => common.clickSidebarTab(browser, 'Templates'))
-     .then(() => browser.waitForExist('//td[text()="Live (mola)"]', 240000));
+     .then(() => browser.waitForExist('//td[text()="Live (mola)"]', 480000));
   });
 
   it('should check that the guest is created and ready', () => {
     return common.clickSidebarTab(browser, 'Guest Management')
-      .then(() => browser.waitForExist('//td[text()="EELS0001"]', 240000))
-      .then(() => browser.waitForExist('//td[text()="EELS0001"]/..//td[text()="Ready"]', 240000))
+      .then(() => browser.waitForExist('//td[text()="EELS0001"]', 480000))
+      .then(() => browser.waitForExist('//td[text()="EELS0001"]/..//td[text()="Ready"]', 480000))
       .then(() => browser.refresh())
       .then(() => browser.pause(750))
       .then(() => browser.getText('//div[@id="tg"]'))

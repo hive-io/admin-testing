@@ -80,12 +80,18 @@ describe('Pool Validations', () => {
       .then(() => browser.waitForExist('(//td[1 and text()="donuts"])[2]', 1500, true));
   });
 
+  it('should check the guest was created', () => {
+    return common.clickSidebarTab(browser, 'Guest Management')
+      .then(() => browser.waitForExist('//td[text()="DEVILS0001"]/..//td[text()="Ready"]', 240000));
+  });
+
   it('should delete the pools', () => {
-    return browser.elements('//td[1 and text()="donuts"]/..//button[text()="Delete"]')
+    return common.clickSidebarTab(browser, 'Guest Pools')
+      .then(() => browser.elements('//td[1 and text()="donuts"]/..//button[text()="Delete"]'))
       .then(els => Promise.mapSeries(els.value, () => {
         return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
           .then(() => common.waitAndClick(
-            '(//td[1 and text()="donuts"]/..//button[text()="Delete"])[1]'))
+            '//td[1 and text()="donuts"]/..//button[text()="Delete"][1]'))
           .then(() => common.confirmPopup())
           .then(() => browser.refresh());
       }));
@@ -93,8 +99,10 @@ describe('Pool Validations', () => {
 
   it('should unload and delete the template', () => {
     return common.clickSidebarTab(browser, 'Templates')
-      .then(() => common.waitAndClick('//td[1 and text()="carnival"]/..//td//button[text()="Unload"]'))
-      .then(() => common.waitAndClick('//td[1 and text()="carnival"]/..//td//button[text()="Remove"]'))
+      .then(() => common.waitAndClick(
+        '//td[1 and text()="carnival"]/..//td//button[text()="Unload"]'))
+      .then(() => common.waitAndClick(
+        '//td[1 and text()="carnival"]/..//td//button[text()="Remove"]'))
       .then(() => common.confirmPopup())
       .then(() => browser.waitForExist('//td[1 and text()="carnival"]', 10000, true))
       .then(() => browser.isExisting('//td[1 and text()="carnival"]'))
@@ -104,7 +112,9 @@ describe('Pool Validations', () => {
   it('should confirm no orphaned guests are left behind', () => {
     let orphanedGuests;
     return common.clickSidebarTab(browser, 'Guest Management')
-      .then(() => browser.pause(3000))
+      .then(() => browser.waitForExist(
+        '//td[text()="DEVILS0001"]/..//td[text()="Ready"]', 15000, true))
+      .catch(err => console.log('Guests remaining after pool deletion.'))
       .then(() => browser.elements('//button[contains(text(), "Action")]'))
       .then(elements => {
         orphanedGuests = elements.value;
