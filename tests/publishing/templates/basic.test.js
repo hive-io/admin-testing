@@ -4,7 +4,7 @@ const common = require('../../common'),
 
 const newTmplBtn = '//button[@id="new_tmpl"]';
 
-describe('Templates', () => {
+describe('Templates Basic', () => {
   before(() => {
     return common.isLoggedIn()
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null );
@@ -22,7 +22,7 @@ describe('Templates', () => {
   });
 
   it('should allow user to cancel creating a new template', () => {
-    return common.waitAndClick('//*[@id="newTmplForm"]/div[11]/button[2 and text()="Cancel"]')
+    return common.waitAndClick('//*[@id="newTmplForm"]/div[12]/button[2]')
       .then(() => browser.waitForExist('//*[@id="newTmplForm"]', 1000, true));
   });
 

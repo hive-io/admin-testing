@@ -13,7 +13,8 @@ const addRealmButton = '//*[@id="add_realm"]',
 
 describe('Realms Basic', () => {
   beforeEach(() => {
-    return common.isLoggedIn()
+    return browser.windowHandleMaximize(['current'])
+      .then(() => common.isLoggedIn())
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null );
   });
 
