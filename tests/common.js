@@ -8,6 +8,10 @@ const chai = require('chai'),
       crypto = require('crypto');
 chai.use(require('chai-string'));
 
+let templatePath = config.nfsPath + config.tmplPath,
+    vmPath = config.nfsPath + config.isoPath,
+    nfs = config.nfsIP;
+
 module.exports = {
 
   randomStr: function(n) {
@@ -34,12 +38,8 @@ module.exports = {
               '//div[@class="input-group"]//input[@name="password"]', 10000))
             .then(() => browser.setValue(
               '//div[@class="input-group"]//input[@name="password"]', password))
-            .then(() => browser.waitForExist(
-              '//div[@class="input-group"]//select[@name="domain"]'), 10000)
-            .then(() => browser.selectByVisibleText(
-              '//div[@class="input-group"]//select[@name="domain"]', domain))
-            .then(() => browser.waitForExist('//button[@type="submit"]'), 10000)
-            .then(() => browser.click('//button[@type="submit"]'));
+            .then(() => browser.selectByVisibleText('//select[@name="realm"]', domain))
+            .then(() => module.exports.waitAndClick('//button[@type="submit"]'));
         }
         return module.exports.clickSidebarTab(browser, 'Overview');
       });
@@ -80,7 +80,7 @@ module.exports = {
 
   isLoggedIn: function() {
     return browser.isExisting('//*[@id="wrapper"]/nav/div[2]/ul[2]/li[3]/a')
-      .then((ex) => ex ? true : false );
+      .then((ex) => ex );
   },
 
   logout: function() {
@@ -134,36 +134,37 @@ module.exports = {
 
   waitAndSet: function(xpath, value) {
     return browser.waitForExist(xpath, 20000)
+      .then(() => browser.waitForEnabled(xpath, 20000))
       .then(() => browser.setValue(xpath, value));
   },
 
-  mkTmpDir: function(tmp, path) {
-    let tpath = `${config.nfsIP}:${config.nfsPath}`;
+  mkTmpDir: function(tmp, subfolder, file) {
+    let tpath = `${config.nfsIP}:${config.nfsPath}/${subfolder}`;
     return fs.mkdirAsync(`${tmp}`)
       .then(() => exec(`mount ${tpath} ${tmp}`))
-      .then(() => fs.statAsync(path))
+      .then(() => fs.statAsync(file))
       .then(stat => {
         if (stat.isFile()) {
-          return fs.unlinkAsync(path);
+          return fs.unlinkAsync(file);
         }
         return null;
       })
-      .catch(e => console.log('Didn`t delete the template.'));
+      .catch(e => console.log('Didn`t delete the template. Either it does not exist or you do not have permission.'));
   },
 
-  rmTmpDir: function(tmp, path) {
+  rmTmpDir: function(tmp, file) {
     return browser.pause(3000)
-      .then(() => fs.statAsync(path))
+      .then(() => fs.statAsync(file))
         .then(stat => {
           if (stat.isFile()) {
-            return fs.unlinkAsync(path);
+            return fs.unlinkAsync(file);
           }
           return null;
         })
-      .catch(e => console.log('Tried to delete file before it exists.'))
+      .catch(e => console.log('Couldn`t delete file.'))
       .then(() => exec(`umount ${tmp}`))
       .then(() => fs.rmdirAsync(tmp))
-      .catch(e => console.log('Can`t remove dir.'));
+      .catch(e => console.log('Can`t remove directory.'));
   },
 
   mountTempDir: function(tmp) {
@@ -186,7 +187,7 @@ module.exports = {
         }
         return null;
       })
-      .catch(e => console.log(`Failed to delete file at: ${path}`));
+      .catch(e => console.log(`Failed to delete file at: ${path}` + e));
   },
 
   confirmPopup: function() {
@@ -194,5 +195,116 @@ module.exports = {
       .then(() => browser.waitForEnabled('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => module.exports.waitAndClick('//*[@id="popup"]//button[text()="Confirm"]'))
       .then(() => browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 20000, true));
+  },
+
+  createStoragePool: function(name, type, server, path) {
+    return module.exports.clickSidebarTab(browser, 'Storage Pools')
+      .then(() => module.exports.waitAndClick('//button[@id="add_sp"]'))
+      .then(() => module.exports.waitAndSet('//*[@id="name"]', name))
+      .then(() => browser.selectByVisibleText('//*[@id="type"]', type))
+      .then(() => module.exports.waitAndSet('//*[@id="server"]', server))
+      .then(() => module.exports.waitAndSet('//*[@id="path"]', path))
+      .then(() => module.exports.waitAndClick('//*[@id="subBtn"]'))
+      .then(() => browser.waitForExist('//td[text()="templates"]'));
+  },
+
+  removeStoragePools: function() {
+    return module.exports.clickSidebarTab(browser, 'Storage Pools')
+      .then(() => browser.waitForExist('//tbody'))
+      .then(() => browser.elements('//button[text()="Remove"]'))
+      .then(elements => Promise.mapSeries(elements.value, () => {
+        return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
+          .then(() => module.exports.waitAndClick('(//button[text()="Remove"])[1]'))
+          .then(() => module.exports.confirmPopup())
+          .then(() => browser.refresh());
+      }))
+      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));
+  },
+
+  addStoragePools: function() {
+    return module.exports.removeStoragePools()
+      .then(() => module.exports.createStoragePool('templates', 'NFS', nfs, templatePath))
+      .then(() => module.exports.createStoragePool('vms', 'NFS', nfs, vmPath));
+  },
+
+  removeTemplates: function() {
+    return module.exports.clickSidebarTab(browser, 'Templates')
+      .then(() => browser.waitForExist('//tbody'))
+      .then(() => browser.elements('//button[text()="Unload"]'))
+      .then(elements => Promise.mapSeries(elements.value, () => {
+        return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
+          .then(() => module.exports.waitAndClick('(//button[text()="Unload"])[1]'))
+          .then(() => browser.waitForExist('//button[text()="Remove"]'));
+      }))
+      .then(() => browser.elements('//button[text()="Remove"]'))
+      .then(elements => Promise.mapSeries(elements.value, () => {
+        return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
+          .then(() => module.exports.waitAndClick('(//button[text()="Remove"])[1]'))
+          .then(() => module.exports.confirmPopup())
+          .then(() => browser.refresh());
+      }))
+      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));
+  },
+
+  removeGuestPools: function() {
+    return module.exports.clickSidebarTab(browser, 'Guest Pools')
+      .then(() => browser.waitForExist('//tbody'))
+      .then(() => browser.elements('//button[text()="Delete"]'))
+      .then(elements => Promise.mapSeries(elements.value, () => {
+        return browser.waitForExist('//*[contains(@class,"modal-backdrop")]', 3000, true)
+          .then(() => module.exports.waitAndClick('(//button[text()="Delete"])[1]'))
+          .then(() => module.exports.confirmPopup())
+          .then(() => browser.refresh());
+      }))
+      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));
+      //TODO: remove orphaned guests if necessary
+  },
+
+  addTemplate: function(name, storage, file, os, persistence) {
+    return module.exports.clickSidebarTab(browser, 'Templates')
+      .then(() => module.exports.waitAndClick('//button[@id="add_tmpl"]'))
+      .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]'))
+      .then(() => browser.setValue('//*[@id="add_tmpl_form"]//*[@id="name"]', name))
+      .then(() => browser.selectByVisibleText('//*[@id="add_tmpl_form"]//*[@id="storage"]', storage))
+      .then(() => browser.waitForExist('//*[@id="add_tmpl_form"]//select[@id="filename"]//option', 20000))
+      .then(() => browser.pause(2000))
+      .then(() => browser.selectByVisibleText('//*[@id="add_tmpl_form"]//select[@id="filename"]', file))
+      .then(() => browser.selectByVisibleText('//*[@id="add_tmpl_form"]//*[@id="os"]', os))
+      .then(() => !persistence ? browser.click('//*[@id ="hash"]') : null )
+      .then(() => module.exports.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
+      .then(() => browser.refresh());
+  },
+
+  addGuestPool: function(name, template, storage, min, max, seed, cpu, mem, persistence) {
+    return  module.exports.clickSidebarTab(browser, 'Guest Pools')
+     .then(() =>  module.exports.waitAndClick('//*[@id="add_pool"]'))
+     .then(() => browser.setValue('//*[@id="name"]', name))
+     .then(() => browser.selectByVisibleText('//*[@id="template"]', template))
+     .then(() => browser.selectByVisibleText('//*[@id="storageType"]', storage))
+     .then(() => browser.isSelected('//*[@id="persistent"]'))
+     .then(sel => {
+       if ( !!sel !== !!persistence ) browser.click('//*[@id="persistent"]');
+     })
+     .then(() => browser.setValue('//*[@id="minCloneDensity"]', min))
+     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', max))
+     .then(() => browser.setValue('//*[@id="seed"]', seed))
+     .then(() => browser.selectByVisibleText('//*[@id="cpu"]', cpu))
+     .then(() => browser.setValue('//*[@id="mem"]', mem))
+     .then(() => browser.selectByVisibleText('//*[@id="Domain"]', 'None'))
+     .then(() =>  module.exports.waitAndClick('//*[@id="subBtn"]'));
+  },
+
+  setCloneDensity: function(number) {
+    return module.exports.clickSidebarTab(browser, 'Appliance', 'Appliance Settings')
+      .then(() => browser.getValue('//*[@id="maxCloneDensity"]'))
+      .then(val => {
+        if (val !== number) {
+          return module.exports.waitAndSet('//*[@id="maxCloneDensity"]', number)
+            .then(() => module.exports.waitAndClick('//button[text()="Submit"]'))
+            .then(() => browser.waitForExist('//div[@id="reconfigure"]', 15000, true))
+            .then(() => browser.pause(8000));
+        }
+        return null;
+      });
   }
 };
