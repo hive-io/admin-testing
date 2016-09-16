@@ -10,8 +10,7 @@ const addRealmButton = '//*[@id="add_realm"]',
 
 describe('Realms Basic', () => {
   before(() => {
-    return common.isLoggedIn()
-      .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
+    return common.login(browser, 'admin', 'admin', 'local')
       .then(() => common.clickSidebarTab(browser, 'Realms'))
       .then(() => browser.elements('//button[text()="Delete"]'))
       .then(els => Promise.mapSeries(els.value, () => {

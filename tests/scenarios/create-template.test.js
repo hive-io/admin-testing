@@ -1,48 +1,40 @@
 'use strict';
-const common = require('../common'),
-      config = require('../../testconfig'),
-      p = require('path');
-
-let tmp = p.join('/tmp', common.randomStr(10));
-let testTmpl = '/testing';
-let path = p.join(tmp, config.tmplPath, testTmpl);
+const common = require('../common');
 
 describe('Create New Template and Pool', () => {
   before(() => {
-    return common.isLoggedIn()
-      .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
-      .then(() => common.clickSidebarTab(browser, 'Templates'))
-      .then(() => common.mkTmpDir(tmp, path));
+    return common.login(browser, 'admin', 'admin', 'local')
+      .then(() => common.setCloneDensity('10'))
+      .then(() => common.removeGuestPools())
+      .then(() => common.removeTemplates())
+      .then(() => common.addStoragePools())
+      .then(() => common.clickSidebarTab(browser, 'Templates'));
   });
 
   after(() => {
-    return common.rmTmpDir(tmp, path)
-    .then(() => browser.refresh());
+    return common.removeGuestPools()
+      .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
+      .then(() => browser.refresh());
   });
-
 
   it('should create a new template', () => {
     return browser.waitForVisible('//tbody')
       .then(() => common.waitAndClick('//button[@id="new_tmpl"]'))
-      .then(() => browser.waitForExist('//*[@id="editTemplate"]'))
-      .then(() => browser.waitForExist('//*[@id="editTemplate"]//*[@id="name"]'))
-      .then(() => browser.waitForExist('//*[@id="page-wrapper" and @class="hidden"]'))
-      .then(() => browser.waitUntil(() => browser.getAttribute('//*[@id="name"]', 'onchange')
-        .then((att) => att !== null)))
-      .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="name"]', 'forest'))
-      .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="path"]',
-        `${config.nfsIP}:${config.nfsPath}${config.tmplPath}${testTmpl}`))
-      .then(() => browser.selectByVisibleText('//*[@id="editTemplate"]//*[@id="os"]', 'Linux'))
-      .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="dsize"]', '2'))
-      .then(() => browser.click('//*[@id="editTemplate"]//*[@id="cdromChk"]'))
-      .then(() => browser.waitForVisible('//*[@id="editTemplate"]//*[@id="cdrom"]'))
-      .then(() => browser.setValue('//*[@id="editTemplate"]//*[@id="cdrom"]',
-        `${config.nfsIP}:${config.nfsPath}${config.isoPath}/mini.iso`))
-      .then(() => common.waitAndClick('//*[@id="editTemplate"]//*[@id="subBtn"]'))
-      .then(() => browser.isExisting('//*[@id="editTemplate"]//*[@id="subBtn"]'))
-      .then((ex) => ex ? common.waitAndClick('//*[@id="subBtn"]') : null )
-      .then(() => browser.waitForVisible('//td[1 and text()="forest"]', 5000))
-      .then(() => browser.waitForVisible('(//td[1 and text()="forest"])[2]', 1000, true));
+      .then(() => browser.setValue('//*[@id="newTmplForm"]//*[@id="name"]', 'forest'))
+      .then(() => browser.selectByVisibleText('//*[@id="storage"]', 'templates'))
+      .then(() => browser.setValue('//*[@id="newTmplForm"]//*[@id="filename"]', 'testing'))
+      .then(() => browser.selectByVisibleText('//*[@id="newTmplForm"]//*[@id="os"]', 'Linux'))
+      .then(() => browser.setValue('//*[@id="newTmplForm"]//*[@id="dsize"]', '2'))
+      .then(() => common.waitAndSet('//*[@id="newTmplForm"]//*[@id="mem"]', '256'))
+      .then(() => browser.click('//*[@id="newTmplForm"]//*[@id="cdromChk"]'))
+      .then(() => browser.waitForVisible('//*[@id="newTmplForm"]//*[@id="cdromStorage"]'))
+      .then(() => browser.waitForExist('//*[@id="newTmplForm"]//*[@id="cdromStorage"]//option[text()="vms"]'))
+      .then(() => browser.selectByVisibleText('//*[@id="newTmplForm"]//*[@id="cdromStorage"]', 'vms'))
+      .then(() => browser.waitForExist('//*[@id="newTmplForm"]//*[@id="cdromFilename"]//option[text()="mini.iso"]'))
+      .then(() => browser.selectByVisibleText('//*[@id="newTmplForm"]//*[@id="cdromFilename"]', 'mini.iso'))
+      .then(() => common.waitAndClick('//*[@id="newTmplForm"]//*[@id="subBtn"]'))
+      .then(() => browser.waitForVisible('//td[1 and text()="forest"]', 5000));
   });
 
   it('should check if new template console works', () => {
@@ -73,12 +65,6 @@ describe('Create New Template and Pool', () => {
         '//td[1 and text()="forest"]/..//td//button[text()="Undefine"]'))
       .then(() => browser.waitForExist('//tbody'))
       .then(() => browser.waitForExist(
-        '//td[1 and text()="forest"]/..//td//button[text()="Author"]'));
-  });
-
-  it('should remove the image', () => {
-    return common.waitAndClick('//td[1 and text()="forest"]/..//td//button[text()="Remove"]')
-      .then(() => common.confirmPopup())
-      .then(() => browser.waitForExist('//td[1 and text()="forest"]', 10000, true));
+        '//td[1 and text()="forest"]/..//td//button[text()="Author"]', 50000));
   });
 });
