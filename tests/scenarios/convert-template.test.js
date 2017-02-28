@@ -20,6 +20,7 @@ describe('Convert Template And Run Pool', () => {
     return common.login(browser, 'admin', 'admin', 'local')
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       //clone density
       .then(() => common.setCloneDensity('10'))
@@ -51,10 +52,10 @@ describe('Convert Template And Run Pool', () => {
   });
 
   it('should create a pool with the converted template', () => {
-    return common.addGuestPool('individual', 'hio-converted', 'Disk', '1', '2', 'sinus', '1', '128', false)
+    return common.addGuestPool('individual', 'hio-converted', 'Disk', '1', '2', 'sinus', '1', '512', false)
       .then(() => browser.waitForExist('//td[1 and text()="individual"]', 20000))
       .then(() => common.clickSidebarTab(browser, 'Templates'))
-      .then(() => browser.waitForExist('//td[text()="Live (individual) | Disk: Loaded"]', 240000));
+      .then(() => browser.waitForExist('//td[text()="Disk: Loaded"]', 240000));
   });
 
   it('should check that the guests are created and are ready', () => {

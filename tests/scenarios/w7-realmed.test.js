@@ -14,6 +14,7 @@ describe('Realm Add Windows Template and Test Pool', () => {
     return common.login(browser, 'admin', 'admin', 'local')
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       .then(() => common.setCloneDensity('10'));
   });
@@ -27,7 +28,7 @@ describe('Realm Add Windows Template and Test Pool', () => {
 
   it('should add a Windows 7 template', () => {
     return common.addTemplate('aries', 'templates', 'w7-vsi', 'Windows 7', false)
-      .then(() => browser.waitForExist('//td[1 and text()="fish"]'));
+      .then(() => browser.waitForExist('//td[1 and text()="aries"]'));
   });
 
   it('should create the HIVEIO realm', () => {
@@ -45,43 +46,40 @@ describe('Realm Add Windows Template and Test Pool', () => {
             .then(() => common.waitAndClick(submit))
             .then(() => browser.waitForExist('//td[text()="HIVEIO"]'));
         }
-        return null;
       });
   });
 
-  it('should create a new guest pool using HIVEIO realm', () => {
-    return  common.clickSidebarTab(browser, 'Guest Pools')
-     .then(() =>  common.waitAndClick('//*[@id="add_pool"]'))
-     .then(() => browser.setValue('//*[@id="name"]', 'daisy'))
-     .then(() => browser.selectByVisibleText('//*[@id="template"]', 'aries'))
-     .then(() => browser.selectByVisibleText('//*[@id="storageType"]', 'Disk'))
-     .then(() => browser.isSelected('//*[@id="persistent"]'))
-     .then(sel => {
-       if ( !!sel ) browser.click('//*[@id="persistent"]');
-     })
-     .then(() => browser.setValue('//*[@id="minCloneDensity"]', min))
-     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', max))
-     .then(() => browser.setValue('//*[@id="seed"]', seed))
-     .then(() => browser.selectByVisibleText('//*[@id="cpu"]', cpu))
-     .then(() => browser.setValue('//*[@id="mem"]', mem))
-     //set up realm
-     .then(() => browser.selectByVisibleText('//*[@id="Domain"]', 'HIVEIO'))
-     .then(() => common.waitAndSet('//*[@id="userGroup"]', 'hiveusers'))
-     .then(() => common.waitAndSet('//*[@id="user"]', 'administrator'))
-     .then(() => common.waitAndSet('//*[@id="Password"]', 'Ric0chet'))
-     .then(() => common.waitAndClick('//*[@id="subBtn"]'))
-     .then(() => browser.waitForExist('//td[1 and text()="cancer"]', 10000))
+  it('should create a new HIVEIO profile', () => {
+    return common.clickSidebarTab(browser, 'Profiles')
+      .then(() => browser.isExisting('//td[text()="HIVEIO"]'))
+      .then(ex => {
+        if (!ex) {
+          return common.waitAndClick('//*[@id="add_np"]')
+            .then(() => common.waitAndSet('//*[@id="name"]', 'HIVEIO'))
+            .then(() => browser.selectByVisibleText('//*[@id="realm"]', 'HIVEIO'))
+            .then(() => common.waitAndSet('//*[@id="userGroup"]', 'hiveusers'))
+            .then(() => common.waitAndSet('//*[@id="user"]', 'administrator'))
+            .then(() => common.waitAndSet('//*[@id="password"]', 'Ric0chet'))
+            .then(() => common.waitAndClick('//*[@id="subBtn"]'))
+            .then(() => browser.waitForExist('//td[text()="HIVEIO"]'));
+        }
+      });
+  });
+
+  it('should create a new guest pool using HIVEIO profile', () => {
+    return common.addGuestPool('daisy', 'aries', 'Disk', 2, 2, 'VIRGO', 2, 2048, true, 'HIVEIO')
      .then(() => common.clickSidebarTab(browser, 'Templates'))
-     .then(() => browser.waitForExist('//td[text()="Live (cancer)"]', 480000));
+     .then(() => browser.waitForExist('//td[text()="daisy"]', 480000));
   });
 
   it('should check that the guest is created and ready', () => {
     return common.clickSidebarTab(browser, 'Guest Management')
       .then(() => browser.waitForExist('//td[text()="VIRGO0001"]', 480000))
       .then(() => browser.waitForExist('//td[text()="VIRGO0001"]/..//td[text()="Ready"]', 480000))
+      .then(() => browser.waitForExist('//td[text()="VIRGO0002"]/..//td[text()="Ready"]', 480000))
       .then(() => browser.refresh())
       .then(() => browser.pause(750))
       .then(() => browser.getText('//div[@id="tg"]'))
-      .then(text => expect(text).to.equal('1'));
+      .then(text => expect(text).to.equal('2'));
   });
 });

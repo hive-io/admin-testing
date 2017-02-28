@@ -6,6 +6,7 @@ describe('Pool Validations', () => {
     return common.login(browser, 'admin', 'admin', 'local')
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       .then(() => common.addTemplate('carnival', 'templates', 'hio-tester.qcow2', 'Linux', false));
   });
@@ -19,12 +20,12 @@ describe('Pool Validations', () => {
 
   it('should create a new guest pool', () => {
     return common.addGuestPool(
-      'dernuts', 'carnival', 'Disk', '1', '10', 'devils', '1', '128', false);
+      'dernuts', 'carnival', 'Disk', '1', '10', 'devils', '1', '512', false);
   });
 
   it('should fail to create a second guest pool with the same name', () => {
     return common.addGuestPool(
-      'dernuts', 'carnival', 'Disk', '1', '10', 'congas', '1', '128', false)
+      'dernuts', 'carnival', 'Disk', '1', '10', 'congas', '1', '512', false)
       .then(() => browser.pause(1500))
       .then(() => browser.isExisting('//*[@id="popup"]//button[text()="Close"]'))
       .then(ex => !!ex ? common.waitAndClick('//*[@id="popup"]//button[text()="Close"]') : null)
@@ -33,7 +34,7 @@ describe('Pool Validations', () => {
 
   it('should fail to create a second guest pool with the same seed name', () => {
     return common.addGuestPool(
-      'bronuts', 'carnival', 'Disk', '1', '10', 'devils', '1', '128', false)
+      'bronuts', 'carnival', 'Disk', '1', '10', 'devils', '1', '512', false)
       .then(() => browser.pause(1500))
       .then(() => browser.isExisting('//*[@id="popup"]//button[text()="Close"]'))
       .then(ex => !!ex ? common.waitAndClick('//*[@id="popup"]//button[text()="Close"]') : null)

@@ -38,7 +38,7 @@ describe('Alter Running Pool', () => {
 
   it('should set max clone density', () => {
     return common.clickSidebarTab(browser, 'Appliance', 'Appliance Settings')
-      .then(() => common.waitAndSet('//*[@id="maxCloneDensity"]', '20'))
+      .then(() => common.waitAndSet('//*[@id="thisIsNotACreditCardNumber"]', '20'))
       .then(() => common.waitAndClick('//button[text()="Submit"]'))
       .then(() => browser.waitForExist('//*[@id="reconfigure"]', 15000, true))
       .then(() => browser.pause(2500))
@@ -46,7 +46,7 @@ describe('Alter Running Pool', () => {
   });
 
   it('should create a new guest pool', () => {
-    return common.addGuestPool('donuts', 'dynamism', 'Disk', '1', '2', 'drops', '1', '128', false)
+    return common.addGuestPool('donuts', 'dynamism', 'Disk', '1', '2', 'drops', '1', '512', false)
      .then(() => browser.waitForExist('//td[1 and text()="donuts"]', 10000));
   });
 

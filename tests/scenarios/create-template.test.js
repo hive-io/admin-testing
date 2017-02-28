@@ -7,6 +7,7 @@ describe('Create New Template and Pool', () => {
       .then(() => common.setCloneDensity('10'))
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       .then(() => common.clickSidebarTab(browser, 'Templates'));
   });
@@ -26,7 +27,7 @@ describe('Create New Template and Pool', () => {
       .then(() => browser.setValue('//*[@id="newTmplForm"]//*[@id="filename"]', 'testing'))
       .then(() => browser.selectByVisibleText('//*[@id="newTmplForm"]//*[@id="os"]', 'Linux'))
       .then(() => browser.setValue('//*[@id="newTmplForm"]//*[@id="dsize"]', '2'))
-      .then(() => common.waitAndSet('//*[@id="newTmplForm"]//*[@id="mem"]', '256'))
+      .then(() => browser.selectByVisibleText('//*[@id="newTmplForm"]//*[@id="mem"]', '512MB'))
       .then(() => browser.click('//*[@id="newTmplForm"]//*[@id="cdromChk"]'))
       .then(() => browser.waitForVisible('//*[@id="newTmplForm"]//*[@id="cdromStorage"]'))
       .then(() => browser.waitForExist('//*[@id="newTmplForm"]//*[@id="cdromStorage"]//option[text()="vms"]'))

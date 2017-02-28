@@ -8,6 +8,7 @@ describe('Add Templates', () => {
       .then((loggedIn) => !loggedIn ? common.login(browser, 'admin', 'admin', 'local') : null )
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       .then(() => common.clickSidebarTab(browser, 'Templates'));
   });

@@ -15,7 +15,8 @@ exports.config = {
   capabilities: [{
     browserName: testconfig.browser
   }],
-  logLevel: 'silent',
+  debug: true,
+  //logLevel: 'silent',
   coloredLogs: true,
   screenshotPath: './errorShots/',
   baseUrl: testconfig.server,

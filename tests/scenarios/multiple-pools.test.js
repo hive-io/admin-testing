@@ -24,6 +24,7 @@ describe('Multiple Pools with Linux Guests', () => {
       .then(() => common.setCloneDensity(guestTotal))
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       .then(() => common.addTemplate('universal!', 'templates', 'hio-tester.qcow2', 'Linux', true));
   });
@@ -37,12 +38,12 @@ describe('Multiple Pools with Linux Guests', () => {
 
   it('should create the first pool', () => {
     return common.addGuestPool(
-      'serial!', 'universal!', 'Disk', `${guestNumber}`, '100', 'dangos', '1', '128', false);
+      'serial!', 'universal!', 'Disk', `${guestNumber}`, '100', 'dangos', '1', '512', false);
   });
 
   it('should create the second pool', () => {
     return common.addGuestPool(
-      'bus!', 'universal!', 'Disk', `${guestNumber}`, '100', 'roadtrip', '1', '128', false);
+      'bus!', 'universal!', 'Disk', `${guestNumber}`, '100', 'roadtrip', '1', '512', false);
   });
 
   it('should check all requested guests exist', () => {

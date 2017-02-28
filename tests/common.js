@@ -51,6 +51,7 @@ module.exports = {
     let correctTitle = !!expectedTitle ? expectedTitle : tabText;
     return browser.waitForExist('//h1[@class="page-header"]', 10000)
     .then(() => browser.waitForVisible('//h1[@class="page-header"]', 10000))
+      .then(() => browser.pause(500))
       .then(() => browser.getText('//h1[@class="page-header"]'))
       .then((text) => { existingTitle = text; })
       .then(() => {
@@ -218,13 +219,15 @@ module.exports = {
           .then(() => module.exports.confirmPopup())
           .then(() => browser.refresh());
       }))
-      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));
+      .then(() => browser.waitForExist('//button[text()="add_sp"]', 1000, true));
   },
 
   addStoragePools: function() {
     return module.exports.removeStoragePools()
       .then(() => module.exports.createStoragePool('templates', 'NFS', nfs, templatePath))
-      .then(() => module.exports.createStoragePool('vms', 'NFS', nfs, vmPath));
+      .then(() => Promise.delay(1000))
+      .then(() => module.exports.createStoragePool('vms', 'NFS', nfs, vmPath))
+      .then(() => Promise.delay(1000));
   },
 
   removeTemplates: function() {
@@ -243,7 +246,7 @@ module.exports = {
           .then(() => module.exports.confirmPopup())
           .then(() => browser.refresh());
       }))
-      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));
+      .then(() => browser.waitForExist('//button[text()="add_tmpl"]', 1000, true));
   },
 
   removeGuestPools: function() {
@@ -256,7 +259,7 @@ module.exports = {
           .then(() => module.exports.confirmPopup())
           .then(() => browser.refresh());
       }))
-      .then(() => browser.waitForExist('//button[text()="Remove"]', 1000, true));
+      .then(() => browser.waitForExist('//button[text()="add_pool"]', 1000, true));
       //TODO: remove orphaned guests if necessary
   },
 
@@ -270,36 +273,53 @@ module.exports = {
       .then(() => browser.pause(2000))
       .then(() => browser.selectByVisibleText('//*[@id="add_tmpl_form"]//select[@id="filename"]', file))
       .then(() => browser.selectByVisibleText('//*[@id="add_tmpl_form"]//*[@id="os"]', os))
-      .then(() => !persistence ? browser.click('//*[@id ="hash"]') : null )
+      //.then(() => !persistence ? browser.click('//*[@id ="hash"]') : null )
       .then(() => module.exports.waitAndClick('//*[@id="add_tmpl_form"]//*[@id="subBtn"]'))
+      .then(() => browser.pause(2000))
       .then(() => browser.refresh());
   },
 
-  addGuestPool: function(name, template, storage, min, max, seed, cpu, mem, persistence) {
+  addGuestPool: function(name, template, storage, min, max, seed, cpu, mem, persistence, profile, agentConnectivity, profileManagement) {
+    profile = profile || 'Default';
+    agentConnectivity = agentConnectivity || 'external';
+    profileManagement = profileManagement || false;
     return  module.exports.clickSidebarTab(browser, 'Guest Pools')
      .then(() =>  module.exports.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', name))
      .then(() => browser.selectByVisibleText('//*[@id="template"]', template))
+     .then(() => browser.selectByVisibleText('//*[@id="networkProfile"]', profile))
      .then(() => browser.selectByVisibleText('//*[@id="storageType"]', storage))
      .then(() => browser.isSelected('//*[@id="persistent"]'))
      .then(sel => {
-       if ( !!sel !== !!persistence ) browser.click('//*[@id="persistent"]');
+       if ( !!sel !== !!persistence ) {
+         browser.click('//*[@id="persistent"]');
+       }
+       return Promise.resolve();
      })
      .then(() => browser.setValue('//*[@id="minCloneDensity"]', min))
-     .then(() => browser.setValue('//*[@id="maxCloneDensity"]', max))
+     .then(() => {
+       if (!persistence) {
+         return browser.setValue('//*[@id="maxCloneDensity"]', max);
+       }
+       return Promise.resolve();
+     })
      .then(() => browser.setValue('//*[@id="seed"]', seed))
-     .then(() => browser.selectByVisibleText('//*[@id="cpu"]', cpu))
-     .then(() => browser.setValue('//*[@id="mem"]', mem))
-     .then(() => browser.selectByVisibleText('//*[@id="Domain"]', 'None'))
+     .then(() => browser.selectByValue('//*[@id="cpu"]', cpu))
+     .then(() => browser.selectByValue('//*[@id="mem"]', mem))
+     .then(() => browser.selectByValue('//*[@id="agentConnectivity"]', agentConnectivity))
+     .then(() => browser.isSelected('//*[@id="profileManagement"]'))
+     .then(sel => {
+       if ( !!sel !== !!profileManagement ) browser.click('//*[@id="profileManagement"]');
+     })
      .then(() =>  module.exports.waitAndClick('//*[@id="subBtn"]'));
   },
 
   setCloneDensity: function(number) {
     return module.exports.clickSidebarTab(browser, 'Appliance', 'Appliance Settings')
-      .then(() => browser.getValue('//*[@id="maxCloneDensity"]'))
+      .then(() => browser.getValue('//*[@id="thisIsNotACreditCardNumber"]'))
       .then(val => {
         if (val !== number) {
-          return module.exports.waitAndSet('//*[@id="maxCloneDensity"]', number)
+          return module.exports.waitAndSet('//*[@id="thisIsNotACreditCardNumber"]', number)
             .then(() => module.exports.waitAndClick('//button[text()="Submit"]'))
             .then(() => browser.waitForExist('//div[@id="reconfigure"]', 15000, true))
             .then(() => browser.pause(8000));

@@ -2,11 +2,12 @@
 const common = require('../common'),
       expect = require('chai').expect;
 
-describe.only('Add Windows Template and Test Pool', () => {
+describe('Add Windows Template and Test Pool', () => {
   before(() => {
     return common.login(browser, 'admin', 'admin', 'local')
       .then(() => common.removeGuestPools())
       .then(() => common.removeTemplates())
+      .then(() => common.removeStoragePools())
       .then(() => common.addStoragePools())
       .then(() => common.setCloneDensity('10'));
   });
@@ -29,7 +30,7 @@ describe.only('Add Windows Template and Test Pool', () => {
       .then(() => browser.waitForExist('//td[1 and text()="dagggyo"]', 10000))
       .then(() => common.clickSidebarTab(browser, 'Templates'))
       .then(() => browser.waitForExist(
-        '//td[contains(text(), "Live (dagggyo)") and contains(text(), "Loaded")]', 500000));
+        '//td[contains(text(), "Loaded")]', 500000));
   });
 
   it('should check that the guest is created and ready', () => {

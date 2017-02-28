@@ -12,11 +12,6 @@ const addRealmButton = '//*[@id="add_realm"]',
 describe('OU Validation', () => {
   before(() => {
     return common.login(browser, 'admin', 'admin', 'local')
-      .then(() => common.removeGuestPools())
-      .then(() => common.removeTemplates())
-      .then(() => common.addStoragePools())
-      .then(() => common.addTemplate('folicle', 'templates', 'w7-vsi', 'Windows 7', false))
-      // create realm
       .then(() => common.clickSidebarTab(browser, 'Realms'))
       .then(() => browser.waitForExist('//tbody'))
       .then(() => browser.isExisting('//td[text()="HIVEIO"]'))
@@ -35,23 +30,33 @@ describe('OU Validation', () => {
       });
   });
 
-  after(() => {
-    return common.removeGuestPools()
-      .then(() => common.removeTemplates())
-      .then(() => common.removeStoragePools())
-      .then(() => browser.refresh());
+  afterEach(() => {
+    return browser.refresh();
   });
 
   it('should validate the OU format (UBS Test)', () => {
-    return common.clickSidebarTab(browser, 'Guest Pools')
-      .then(() => common.waitAndClick('//*[@id="add_pool"]'))
-      .then(() => browser.selectByVisibleText('//*[@id="Domain"]', 'HIVEIO'))
+    return common.clickSidebarTab(browser, 'Profiles')
+      .then(() => common.waitAndClick('//*[@id="add_np"]'))
+      .then(() => browser.selectByVisibleText('//*[@id="realm"]', 'HIVEIO'))
       .then(() => common.waitAndSet('//*[@id="OU"]',
         'ou=rds vdi, ou=LoginVSI,OU=Testing,dc=eng,dc=wintel,dc=ubseng,dc=net'))
       .then(() => common.waitAndSet('//*[@id="userGroup"]', 'anyText'))
       .then(() => browser.isExisting('//*[@id="ou-message"]'))
       .then(ex => {
         return expect(ex).to.be.false;
+      });
+  });
+
+  it('should fail invalid OU', () => {
+    return common.clickSidebarTab(browser, 'Profiles')
+      .then(() => common.waitAndClick('//*[@id="add_np"]'))
+      .then(() => browser.selectByVisibleText('//*[@id="realm"]', 'HIVEIO'))
+      .then(() => common.waitAndSet('//*[@id="OU"]',
+        'ou=rds vdi, ou=LoginVSI,OU=Testing,dc=eng,dc=wintel,dc=ubseng,dc='))
+      .then(() => common.waitAndSet('//*[@id="userGroup"]', 'anyText'))
+      .then(() => browser.isExisting('//*[@id="ou-message"]'))
+      .then(ex => {
+        return expect(ex).to.be.true;
       });
   });
 });
