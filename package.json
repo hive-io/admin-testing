@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "phantomjs-prebuilt": "^2.1.7",
-    "selenium-standalone": "^5.4.0"
+    "selenium-standalone": "^5.4.0",
+    "bluebird": "^3.5.0"
   }
 }
