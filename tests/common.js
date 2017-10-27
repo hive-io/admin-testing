@@ -279,10 +279,9 @@ module.exports = {
       .then(() => browser.refresh());
   },
 
-  addGuestPool: function(name, template, storage, min, max, seed, cpu, mem, persistence, profile, agentConnectivity, profileManagement) {
+  addGuestPool: function(name, template, storage, min, max, seed, cpu, mem, persistence, profile, agentConnectivity) {
     profile = profile || 'Default';
     agentConnectivity = agentConnectivity || 'external';
-    profileManagement = profileManagement || false;
     return  module.exports.clickSidebarTab(browser, 'Guest Pools')
      .then(() =>  module.exports.waitAndClick('//*[@id="add_pool"]'))
      .then(() => browser.setValue('//*[@id="name"]', name))
@@ -307,10 +306,7 @@ module.exports = {
      .then(() => browser.selectByValue('//*[@id="cpu"]', cpu))
      .then(() => browser.selectByValue('//*[@id="mem"]', mem))
      .then(() => browser.selectByValue('//*[@id="agentConnectivity"]', agentConnectivity))
-     .then(() => browser.isSelected('//*[@id="profileManagement"]'))
-     .then(sel => {
-       if ( !!sel !== !!profileManagement ) browser.click('//*[@id="profileManagement"]');
-     })
+     .then(() => Promise.delay(500))
      .then(() =>  module.exports.waitAndClick('//*[@id="subBtn"]'));
   },
 
